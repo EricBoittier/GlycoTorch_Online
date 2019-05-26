@@ -13,11 +13,11 @@ app = Flask(__name__)
 UPLOAD_FOLDER = '/tmp'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATA_FOLDER = '/data/ligands/pdb'
-app.config['DATA_FOLDER'] = DATA_FOLDER
+# DATA_FOLDER = '/data/ligands/pdb'
+# app.config['DATA_FOLDER'] = DATA_FOLDER
 
-GLYCOSIDIC_FOLDER = '/notebooks/glycosidic'
-app.config['GLYCOSIDIC_FOLDER'] = GLYCOSIDIC_FOLDER
+# GLYCOSIDIC_FOLDER = '/notebooks/glycosidic'
+# app.config['GLYCOSIDIC_FOLDER'] = GLYCOSIDIC_FOLDER
 
 app.config['DEBUG'] = True
 
