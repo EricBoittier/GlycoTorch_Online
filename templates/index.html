@@ -53,7 +53,7 @@
                 border-radius: 25px;
     }
 
-        .boxed_red {
+    .boxed_red {
 
                 margin-left: 20%;
                 margin-right: 20%;
@@ -62,6 +62,20 @@
                 padding: 25px;
                 border-radius: 25px;
     }
+
+    .grey {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                background-color: #D3D3D3;
+                /*border: 3px solid #cc0000;
+                border-width: 10px;*/
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+
+
 
 </style>
 
@@ -77,7 +91,7 @@
 
     <table>
         <tr>
-            <th> <a href="http://ericboittier.pythonanywhere.com/"> <img src="https://ericboittier.pythonanywhere.com/static/glycotorch.svg" height="87px" width="100px" > </a></th>
+            <th> <a href="http://ericboittier.pythonanywhere.com/"> <img src="https://ericboittier.pythonanywhere.com/static/glycotorch.svg" height="120px" width="150px" > </a></th>
             <th>Open source, scientific software for the analysis of <br> glycosaminoglycans (GAGs) and their complexes.</th>
         </tr>
 
@@ -91,15 +105,21 @@
 
 <center>
 
-    <div class="boxed_red">
+<!--     <div class="boxed_red">
 
  <h1> Interactive Data Sets </h1>
 
-
-
 <p> <a href="templates/ligand_torsions_plot.html" > <font size="+2">GAG Torsions in the PDB</font> </a>    </p>
 
-        </div>
+        </div> -->
+
+<h1> About </h1>
+<div class="grey">
+
+Text
+
+</div>
+
 
 <h1> Tools </h1>
 
@@ -111,7 +131,7 @@
     <h3> Glycosaminoglycan analysis </h3>
 
         <p1 padding: 0.2 em>
-        Please select a PDB format file for analysis. <br>
+        Please select a .pdb file for analysis and/or to prepare for docking. <br>
         </p1>
 
         <p1>
@@ -132,7 +152,7 @@
     </p1>
 
 
-    <div class="boxed_green">
+<!--     <div class="boxed_green">
 
     <center>
 
@@ -154,7 +174,7 @@
                             </form>
 
                                     <p1 padding: 0.2 em>
-                            Known crystal pose (.pdbqt) <br>
+                            Known crystal pose, if available (.pdbqt) <br>
                             </p1>
                             <form method=post enctype=multipart/form-data>
                             <input type=file name=vina_crystal_pose>
@@ -165,7 +185,7 @@
                             </td>
 
         <form method=post enctype=multipart/form-data>
-        <input type=submit value=analyse_docking>
+        <input type=submit value="Start">
         </form>
 
     </center>
@@ -175,7 +195,7 @@
     <p1>
         &#160;
     </p1>
-
+ -->
 
 
 </body>
