@@ -151,7 +151,7 @@ table.blueTable tr:nth-child(even) {
                 <th> <center> Ring </center> </th>
 
                 {% for hash in ligand.get_ordered_hashes() %}
-                <td> {{  "{0} {1}".format(ligand.Rings[hash].get_ring_name(), ligand.Rings[hash].get_ID())  }}  </td>
+                <td> {{  "{0} ({1})".format(ligand.Rings[hash].get_ring_name(), ligand.Rings[hash].get_ID())  }}  </td>
                 {% endfor %}
                 
             </tr>
