@@ -166,8 +166,8 @@ def ligandAnalysis(name):
         pdbqt = Carbohydrate_to_PDBQT(l)
         pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
         uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-        print(uploads + name + ".pdbqt")
-        return send_from_directory(directory=uploads, filename=name + ".pdbqt")
+        print(pdbqt.Carbohydrate.filepath)
+        return send_file(pdbqt.Carbohydrate.filepath, as_attachment=True)
 
     elif request.method == 'GET':
         return render_template('LigandAnalysis.html', name=name, ligand=l)
