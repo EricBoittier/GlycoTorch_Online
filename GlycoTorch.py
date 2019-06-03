@@ -160,7 +160,7 @@ def ligandAnalysis(name):
     l = Carbohydrate(filename)
 
     if request.method == 'POST':
-        if 'download' in request.form::
+        if 'download' in request.form:
             # hello
             flash('Working on it')
     elif request.method == 'GET':
