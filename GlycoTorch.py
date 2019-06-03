@@ -161,6 +161,8 @@ def ligandAnalysis(name):
 
     if request.method == 'POST' and request.form['download']:
         flash('Working on it')
+        return redirect(request.url)
+        
     elif request.method == 'GET':
         return render_template('LigandAnalysis.html', name=name, ligand=l)
 
