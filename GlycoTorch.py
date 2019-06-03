@@ -158,4 +158,11 @@ def get_uploads():
 def ligandAnalysis(name):
     filename = os.path.join(app.config['UPLOAD_FOLDER'], name)
     l = Carbohydrate(filename)
+
+
+    if request.method == 'POST':
+    if request.form['submit_button'] == 'Do Something':
+        print("here")
+        pass # do something
+
     return render_template('LigandAnalysis.html', name=name, ligand=l)
