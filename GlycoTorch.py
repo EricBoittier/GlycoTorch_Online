@@ -159,10 +159,8 @@ def ligandAnalysis(name):
     filename = os.path.join(app.config['UPLOAD_FOLDER'], name)
     l = Carbohydrate(filename)
 
-    if request.method == 'POST':
-        if 'download' in request.form:
-            # hello
-            flash('Working on it')
+    if request.method == 'POST' and request.form['download']:
+        flash('Working on it')
     elif request.method == 'GET':
         return render_template('LigandAnalysis.html', name=name, ligand=l)
 
