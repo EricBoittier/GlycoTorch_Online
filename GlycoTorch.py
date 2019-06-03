@@ -154,7 +154,7 @@ def get_uploads():
     return render_template('/uploads/uploads.html')
 
 
-@app.route('/LigandAnalysis/<name>')
+@app.route('/LigandAnalysis/<name>', methods=['GET', 'POST'])
 def ligandAnalysis(name):
     filename = os.path.join(app.config['UPLOAD_FOLDER'], name)
     l = Carbohydrate(filename)
