@@ -118,7 +118,7 @@ class Carbohydrate_to_PDBQT(object):
     def save_flex(self, path=None):
 
         if path:
-            self.Carbohydrate.filepath = path + "/" + self.Carbohydrate.filename
+            self.Carbohydrate.filepath = os.path.join(path, self.Carbohydrate.filename)
             print(self.Carbohydrate.filepath)
 
         tmp = open("./tmp.pdb", "w")
