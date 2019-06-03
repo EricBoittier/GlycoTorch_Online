@@ -161,8 +161,7 @@ def ligandAnalysis(name):
 
 
     if request.method == 'POST':
-        if request.form['submit_button'] == 'Do Something':
+        if request.form['submit_button'] == 'Generate GlycoTorch Vina Input':
             flash('Working on it')
-            pass # do something
 
     return render_template('LigandAnalysis.html', name=name, ligand=l)
