@@ -8,7 +8,7 @@ from Carbohydrate import *
 from Docking_Analysis import *
 
 app = Flask(__name__)
-
+app.secret_key = "super secret key"
 
 UPLOAD_FOLDER = '/tmp'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
