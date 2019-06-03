@@ -162,7 +162,7 @@ def ligandAnalysis(name):
 
     if request.method == 'POST':
         if request.form['submit_button'] == 'Do Something':
-            print("here")
+            flash('Working on it')
             pass # do something
 
     return render_template('LigandAnalysis.html', name=name, ligand=l)
