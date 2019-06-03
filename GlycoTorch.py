@@ -160,7 +160,7 @@ def ligandAnalysis(name):
     l = Carbohydrate(filename)
 
     if request.method == 'POST':
-        if request.form['submit_button'] == 'Generate GlycoTorch Vina Input':
+        if 'download' in request.form::
             # hello
             flash('Working on it')
     elif request.method == 'GET':
