@@ -167,7 +167,7 @@ def ligandAnalysis(name):
         pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
         uploads = app.config['UPLOAD_FOLDER']
         print(uploads + l.filepath + ".pdbqt")
-        return send_from_directory(directory=uploads, filename=l.filepath + ".pdbqt")
+        return send_from_directory(directory=uploads, filename=name + ".pdbqt")
 
     elif request.method == 'GET':
         return render_template('LigandAnalysis.html', name=name, ligand=l)
