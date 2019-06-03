@@ -37,7 +37,7 @@ def allowed_file(filename):
 def upload_file():
 
     if request.method == 'POST':
-        print(request.form.__dict__)
+        # print(request.form.__dict__)
         if 'analyse_ligand' in request.form:
 
             # check if the post request has the file part
