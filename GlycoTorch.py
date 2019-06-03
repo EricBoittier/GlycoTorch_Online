@@ -6,6 +6,9 @@ from flask import send_from_directory
 from flask_cors import CORS, cross_origin
 from Carbohydrate import *
 from Docking_Analysis import *
+from PrepareFFs import *
+from Carbohydrate_to_PDBQT import *
+
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
@@ -160,9 +163,11 @@ def ligandAnalysis(name):
     l = Carbohydrate(filename)
 
     if request.method == 'POST' and request.form['download']:
-        flash('Working on it')
-        return redirect(request.url)
-        
+        pdbqt = Carbohydrate_to_PDBQT(l)
+        pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
+        uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+        return send_from_directory(directory=uploads, filename=l.filepath + ".pdbqt")
+
     elif request.method == 'GET':
         return render_template('LigandAnalysis.html', name=name, ligand=l)
 
