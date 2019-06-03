@@ -165,7 +165,7 @@ def ligandAnalysis(name):
     if request.method == 'POST' and request.form['download']:
         pdbqt = Carbohydrate_to_PDBQT(l)
         pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
-        uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+        uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
         return send_from_directory(directory=uploads, filename=l.filepath + ".pdbqt")
 
     elif request.method == 'GET':
