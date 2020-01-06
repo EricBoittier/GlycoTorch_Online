@@ -19,7 +19,6 @@ class Linkage(object):
         self.linkage_type = None
         self.linkage_number = None
         self.linkage_name = None
-        self.set_linkage_name()
         self.ring1 = None
         self.ring2 = None
 
@@ -27,6 +26,8 @@ class Linkage(object):
         self.ring1 = ring1
         self.ring2 = ring2
         self.set_linkage_type()
+        self.set_linkage_name()
+
 
     def get_linkage_name(self):
         return self.linkage_name

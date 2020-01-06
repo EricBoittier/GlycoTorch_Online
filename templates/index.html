@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
 
+{% include 'header.html' %}
+
   <!-- Basic Page Needs
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
-  <title>Your page title here :)</title>
+  <title>GlycoTorch</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -24,23 +26,171 @@
 
   <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="icon" type="image/png" href="/templates/images/favicon.png">
+  <link rel="icon" type="image/png" href="https://ericboittier.pythonanywhere.com/static/glycotorch.png">
 
-</head>
+<html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="icon" href="https://ericboittier.pythonanywhere.com/static/glycotorch.svg">
+
+<style>
+
+
+    .boxed_blue {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                border: 3px solid #00004d;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .boxed_green {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                border: 3px solid #00802b;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .boxed_red {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                border: 3px solid #cc0000;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .grey {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                background-color: #D3D3D3;
+                /*border: 3px solid #cc0000;
+                border-width: 10px;*/
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+
+
+
+</style>
+
+
+
+
+
 <body>
 
-  <!-- Primary Page Layout
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <div class="container">
-    <div class="row">
-      <div class="one-half column" style="margin-top: 25%">
-        <h4>Basic Page</h4>
-        <p>This index.html page is a placeholder with the CSS, font and favicon. It's just waiting for you to add some content! If you need some help hit up the <a href="http://www.getskeleton.com">Skeleton documentation</a>.</p>
-      </div>
-    </div>
-  </div>
+<center>
 
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<!--     <div class="boxed_red">
+
+ <h1> Interactive Data Sets </h1>
+
+<p> <a href="templates/ligand_torsions_plot.html" > <font size="+2">GAG Torsions in the PDB</font> </a>    </p>
+
+        </div> -->
+
+<h1> About </h1>
+<div class="grey">
+
+GlycoTorch is a python based web application for analysing Glycosaminoglycans (GAGs) and their complexes. Users can upload GAGs structures and prepare input for GlycoTorch Vina, a GAG focused docking program developed by the author. Source code and binaries for these programs are also available: <a href="https://github.com/EricBoittier/GlycoTorch">GlycoTorch</a> and <a href="https://github.com/EricBoittier/GlycoTorch-Vina">GlycoTorch Vina</a>.
+
+</div>
+
+
+<h1> Tools </h1>
+
+
+
+    <div class="boxed_blue">
+
+
+    <h3> Glycosaminoglycan analysis </h3>
+
+        <p1 padding: 0.2 em>
+        Please select a .pdb file for analysis and/or to prepare for docking. <br>
+        </p1>
+
+        <p1>
+            &#160;
+        </p1>
+
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="ligand_to_analyse">
+    <p1>
+        &#160;
+    </p1>
+
+      <input type="submit" name="analyse_ligand">
+    </form>
+
+    </center>
+
+    </div>
+
+    <p1>
+        &#160;
+    </p1>
+
+
+<!--     <div class="boxed_green">
+
+    <center>
+
+    <h3> ADV Vina Docking Analysis </h3>
+
+
+                            <p1 padding: 0.2 em>
+                            Output file (.pdbqt) <br>
+                            </p1>
+                            <form method=post enctype=multipart/form-data>
+                            <input type=file name=vina_output_file>
+                            </form>
+
+                            <p1 padding: 0.2 em>
+                            Protein (.pdbqt) <br>
+                            </p1>
+                            <form method=post enctype=multipart/form-data>
+                            <input type=file name=vina_protein_file>
+                            </form>
+
+                                    <p1 padding: 0.2 em>
+                            Known crystal pose, if available (.pdbqt) <br>
+                            </p1>
+                            <form method=post enctype=multipart/form-data>
+                            <input type=file name=vina_crystal_pose>
+                            </form>
+
+
+
+                            </td>
+
+        <form method=post enctype=multipart/form-data>
+        <input type=submit value="Start">
+        </form>
+
+    </center>
+
+    </div>
+
+    <p1>
+        &#160;
+    </p1>
+ -->
+
+{% include 'footer.html' %}
+
 </body>
+
+
 </html>
+
+
+

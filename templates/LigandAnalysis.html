@@ -42,21 +42,7 @@ table.blueTable tr:nth-child(even) {
 
 <head>
 
-    <head>
-
-        <title>GlycoTorch</title>
-
-        <center>
-
-            <table>
-                <tr>
-                    <th> <a href="http://ericboittier.pythonanywhere.com/"> <img src="https://ericboittier.pythonanywhere.com/static/d7897ddc-7d66-46e0-8dc3-6f25e65ce681.png"> </a></th>
-                    <th>Open source, scientific software for the analysis of <br> glycosaminoglycans (GAGs) and their complexes.</th>
-                </tr>
-
-            </table>
-        </center>
-
+{% include 'header.html' %}
 
     </head>
     <meta charset="utf-8">
@@ -93,6 +79,20 @@ table.blueTable tr:nth-child(even) {
             </tr>
         </tbody>
     </table>
+
+    
+    <p1>
+        &#160;
+    </p1>
+
+    <center>
+  
+
+    <form method="POST" > 
+    <input type="submit" name="download" value="Generate GlycoTorch Vina Input">
+    </form>
+
+     </center>
 
     <p1>
         &#160;
@@ -154,7 +154,7 @@ table.blueTable tr:nth-child(even) {
     </p1>
     <br>
     <table class="blueTable">
-        <p1> <b> Cremer-Pople Coordinants </b>
+        <p1> <b> Cremer-Pople Coordinates </b>
         </p1>
 
         <tbody>
@@ -163,7 +163,7 @@ table.blueTable tr:nth-child(even) {
                 <th> <center> Ring </center> </th>
 
                 {% for hash in ligand.get_ordered_hashes() %}
-                <td> {{  "{0} {1}".format(ligand.Rings[hash].get_ring_name(), ligand.Rings[hash].get_ID())  }}  </td>
+                <td> {{  "{0} ({1})".format(ligand.Rings[hash].get_ring_name(), ligand.Rings[hash].get_ID())  }}  </td>
                 {% endfor %}
                 
             </tr>
@@ -244,7 +244,12 @@ stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
 {% endif %}
 </script>
 
+<p1>
+    &#160;
+</p1>
 
+
+{% include 'footer.html' %}
 
 </body>
 </html>

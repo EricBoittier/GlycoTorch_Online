@@ -6,18 +6,22 @@ from flask import send_from_directory
 from flask_cors import CORS, cross_origin
 from Carbohydrate import *
 from Docking_Analysis import *
+from PrepareFFs import *
+from Carbohydrate_to_PDBQT import *
+from flask import send_file
+
 
 app = Flask(__name__)
-
+app.secret_key = "super secret key"
 
 UPLOAD_FOLDER = '/tmp'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATA_FOLDER = '/data/ligands/pdb'
-app.config['DATA_FOLDER'] = DATA_FOLDER
+# DATA_FOLDER = '/data/ligands/pdb'
+# app.config['DATA_FOLDER'] = DATA_FOLDER
 
-GLYCOSIDIC_FOLDER = '/notebooks/glycosidic'
-app.config['GLYCOSIDIC_FOLDER'] = GLYCOSIDIC_FOLDER
+# GLYCOSIDIC_FOLDER = '/notebooks/glycosidic'
+# app.config['GLYCOSIDIC_FOLDER'] = GLYCOSIDIC_FOLDER
 
 app.config['DEBUG'] = True
 
@@ -34,7 +38,7 @@ def allowed_file(filename):
 def upload_file():
 
     if request.method == 'POST':
-        print(request.form.__dict__)
+        # print(request.form.__dict__)
         if 'analyse_ligand' in request.form:
 
             # check if the post request has the file part
@@ -154,8 +158,19 @@ def get_uploads():
     return render_template('/uploads/uploads.html')
 
 
-@app.route('/LigandAnalysis/<name>')
+@app.route('/LigandAnalysis/<name>', methods=['GET', 'POST'])
 def ligandAnalysis(name):
     filename = os.path.join(app.config['UPLOAD_FOLDER'], name)
     l = Carbohydrate(filename)
-    return render_template('LigandAnalysis.html', name=name, ligand=l)
+
+    if request.method == 'POST' and request.form['download']:
+        pdbqt = Carbohydrate_to_PDBQT(l)
+        pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
+        uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+        print(pdbqt.Carbohydrate.filepath)
+        return send_file(pdbqt.Carbohydrate.filepath+".pdbqt", as_attachment=True)
+
+    elif request.method == 'GET':
+        return render_template('LigandAnalysis.html', name=name, ligand=l)
+
+
