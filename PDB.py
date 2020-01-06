@@ -74,22 +74,26 @@ class PDB(object):
     def setAtomsAndConnections(self):
 
         ignore = []
+        atom_numbers = []
 
         for line in self.lines:
             if (line.split()[0].startswith("ATOM") or line.split()[0].startswith("HETATM")) and len(line.strip()) > 20:
                 atom = Atom(line)
+                atom_numbers.append(atom.id)
                 if not atom.atom_type.__contains__("H"):
                     self.graph.add_node(atom.getID())
                     a = Atom(line)
                     self.atoms[int(a.getID())] = a
                 else:
                     ignore.append(int(atom.getID()))
+
             elif line.startswith("CONECT"):
                 split = line.split()
-                for connection in split[2:]:
-                    if int(connection) not in ignore and int(split[1]) not in ignore:
-                        self.atoms[int(line.split()[1])].add_connection(int(connection))
-                        self.graph.add_edge(int(split[1]), int(connection))
+                if int(split[1]) in atom_numbers:
+                    for connection in split[2:]:
+                        if int(connection) not in ignore and int(split[1]) not in ignore:
+                            self.atoms[int(line.split()[1])].add_connection(int(connection))
+                            self.graph.add_edge(int(split[1]), int(connection))
 
     def getAllConnections(self):
         return self.connections

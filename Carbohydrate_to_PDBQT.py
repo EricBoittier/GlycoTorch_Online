@@ -1,5 +1,9 @@
 from Angle import *
+from Carbohydrate import *
 import os
+import sys
+import argparse
+
 
 
 class Carbohydrate_to_PDBQT(object):
@@ -752,3 +756,11 @@ class Carbohydrate_to_PDBQT(object):
         while len(string) < pad:
             string = " " + string
         return string
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
+    parser.add_argument("--file", type=str, default=None, help="full path to file")
+    args = parser.parse_args()
+    c = Carbohydrate(args.file)
+    pdbqt = Carbohydrate_to_PDBQT(c)
+    pdbqt.save_flex()
