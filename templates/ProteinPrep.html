@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="icon" href="https://ericboittier.pythonanywhere.com/static/flavicon.png">
+
+<html lang="en">
+
+
+<style>
+
+
+.boxed_blue {
+
+    margin-left: 30%;
+    margin-right: 30%;
+    border: 3px solid #00004d;
+    border-width: 10px;
+    padding: 25px;
+    border-radius: 25px;
+}
+
+table.blueTable {
+  border: 1px solid #1C6EA4;
+  background-color: #EEEEEE;
+  width: 50%;
+  text-align: center;
+  border-collapse: collapse;
+}
+table.blueTable td, table.blueTable th {
+  border: 1px solid #AAAAAA;
+  padding: 3px 2px;
+}
+table.blueTable tbody td {
+  font-size: 13px;
+}
+table.blueTable tr:nth-child(even) {
+  background: #D0E4F5;
+}
+
+
+</style>
+
+
+<head>
+
+{% include 'header.html' %}
+
+    </head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+
+    <div class="boxed_blue">
+        <center>
+            <div id="viewport" style="width:500px; height:400px;"></div>
+        </center>
+    </div>
+
+
+    <p1>
+        &#160;
+    </p1>
+
+    <center>
+
+
+    <form method="POST" >
+    <input type="submit" name="download" value="Generate Protein PDBQT file">
+    </form>
+
+     </center>
+
+    <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+    <script>
+        function defaultStructureRepresentation( component ){
+    // bail out if the component does not contain a structure
+    if( component.type !== "structure" ) return;
+    // add three representations
+    component.addRepresentation( "cartoon", {
+        aspectRatio: 3.0,
+        scale: 1.5
+    } );
+    component.addRepresentation( "licorice", {
+        sele: "hetero and not ( water or ion )",
+        multipleBond: true
+    } );
+    component.addRepresentation( "spacefill", {
+        sele: "water or ion",
+        scale: 0.5
+    } );
+}
+
+function distanceSelection ( o ){
+    // get all atoms within 5 Angstrom of selection
+    var selection = new NGL.Selection( "saccharide" );
+    var radius = 6;
+    var atomSet = o.structure.getAtomSetWithinSelection( selection, radius );
+    // expand selection to complete groups
+    var atomSet2 = o.structure.getAtomSetWithinGroup( atomSet );
+    o.addRepresentation( "licorice", { sele: atomSet2.toSeleString() } );
+    // o.addRepresentation( "cartoon" );
+    o.autoView();}
+
+{% if name %}
+
+document.addEventListener("DOMContentLoaded", function () {
+    var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
+    stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});
+stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+
+{% endif %}
+
+</script>
+
+<p1>
+    &#160;
+</p1>
+
+
+{% include 'footer.html' %}
+
+</body>
+</html>
+

@@ -43,7 +43,7 @@ def upload_file():
 
             # check if the post request has the file part
             if 'ligand_to_analyse' not in request.files:
-                flash('No file part')
+                flash('No file')
                 return redirect(request.url)
 
             file = request.files['ligand_to_analyse']
@@ -56,6 +56,25 @@ def upload_file():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 return redirect('/LigandAnalysis/'+filename)
+
+        if 'analyse_protein' in request.form:
+            # check if the post request has the file part
+            if 'protein_to_analyse' not in request.files:
+                flash('No file')
+                return redirect(request.url)
+
+            file = request.files['protein_to_analyse']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                return redirect('/ProteinPrep/' + filename)
+
+
 
         if 'docking_analysis' in request.form:
             # check if the post request has the file part
