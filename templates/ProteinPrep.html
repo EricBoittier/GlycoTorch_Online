@@ -76,24 +76,24 @@ table.blueTable tr:nth-child(even) {
 
     {% if name %}
 
+    var components = [];
+
     var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
+    var color = new THREE.Color( 0x00ff00 );
+    var topPosition = 12
+    var center_x = -23 ;
+    var center_y = 54 ;
+    var center_z = 13 ;
+    var size_x = 20 ;
+    var size_y = 20 ;
+    var size_z = 20 ;
 
     document.addEventListener("DOMContentLoaded", function () {
 
         stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});
         
         // stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
-        var color = new THREE.Color( 0x00ff00 );
-        var topPosition = 12
 
-
-        var center_x = -23 ;
-        var center_y = 54 ;
-        var center_z = 13 ;
-
-        var size_x = 20 ;
-        var size_y = 20 ;
-        var size_z = 20 ;
 
         makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
 
@@ -328,7 +328,6 @@ var saveConfigButton = createFileButton("Save config file", {
     // }
   }
 }, { top: getTopPosition(40), left: "24px" })
-
 
 addElement(saveConfigButton)
 
