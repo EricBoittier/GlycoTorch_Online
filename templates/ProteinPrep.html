@@ -226,7 +226,7 @@ addElement(createElement("span", {
 }, { top: getTopPosition(20), left: "12px", color: "black" }))
 var center_x_range = createElement("input", {
   type: "range", value: 0, min: -100, max: 100, step: 1
-}, { top: getTopPosition(16), left: "12px" })
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
 
 center_x_range.oninput = function (e) {
   center_x = parseFloat(e.target.value)
@@ -260,7 +260,7 @@ addElement(createElement("span", {
 }, { top: getTopPosition(20), left: "12px", color: "black" }))
 var center_y_range = createElement("input", {
   type: "range", value: 0, min: -100, max: 100, step: 1
-}, { top: getTopPosition(16), left: "12px" })
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
 center_y_range.oninput = function (e) {
   center_y = parseFloat(e.target.value)
   refresh();
@@ -273,7 +273,7 @@ addElement(createElement("span", {
 }, { top: getTopPosition(20), left: "12px", color: "black" }))
 var size_y_range = createElement("input", {
   type: "range", value: 10, min: 0, max: 100, step: 0.5
-}, { top: getTopPosition(16), left: "12px" })
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
 size_y_range.oninput = function (e) {
   size_y = parseFloat(e.target.value)
   refresh();
@@ -287,7 +287,7 @@ addElement(createElement("span", {
 }, { top: getTopPosition(20), left: "12px", color: "black" }))
 var center_z_range = createElement("input", {
   type: "range", value: 0, min: -100, max: 100, step: 1
-}, { top: getTopPosition(16), left: "12px" })
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
 center_z_range.oninput = function (e) {
   refresh();
   center_z = parseFloat(e.target.value)
@@ -300,7 +300,7 @@ addElement(createElement("span", {
 }, { top: getTopPosition(20), left: "12px", color: "black" }))
 var size_z_range = createElement("input", {
   type: "range", value: 10, min: 0, max: 100, step: 0.5
-}, { top: getTopPosition(16), left: "12px" })
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
 
 size_z_range.oninput = function (e) {
   size_z = parseFloat(e.target.value)
