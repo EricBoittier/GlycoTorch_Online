@@ -79,7 +79,8 @@ table.blueTable tr:nth-child(even) {
     document.addEventListener("DOMContentLoaded", function () {
         var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
         stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});
-        stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+        
+        // stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
 
         var center_x = -23 ;
         var center_y = 54 ;
