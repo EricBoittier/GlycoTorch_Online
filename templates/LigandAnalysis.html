@@ -200,7 +200,7 @@ table.blueTable tr:nth-child(even) {
     <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
     <script>
 
-        function defaultStructureRepresentation( component ){
+    function defaultStructureRepresentation( component ){
     // bail out if the component does not contain a structure
     if( component.type !== "structure" ) return;
     // add three representations
@@ -234,7 +234,7 @@ function distanceSelection ( o ){
 document.addEventListener("DOMContentLoaded", function () {
     var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
     stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});
-stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+    stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
 
 {% endif %}
 </script>

@@ -76,11 +76,16 @@ table.blueTable tr:nth-child(even) {
 
     {% if name %}
 
+    var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
+
     document.addEventListener("DOMContentLoaded", function () {
-        var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
+
         stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});
         
         // stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+        var color = new THREE.Color( 0x00ff00 );
+        var topPosition = 12
+
 
         var center_x = -23 ;
         var center_y = 54 ;
@@ -94,7 +99,7 @@ table.blueTable tr:nth-child(even) {
 
 
 
-    function defaultStructureRepresentation( component ){
+function defaultStructureRepresentation( component ){
     // bail out if the component does not contain a structure
     if( component.type !== "structure" ) return;
     // add three representations
@@ -137,10 +142,6 @@ if (!String.prototype.format) {
 }
 
 
-
-
-var color = new THREE.Color( 0x00ff00 );
-
 function AddBox(position, height) {
   var shape = new NGL.Shape("shape");
   var boxBuffer = new NGL.BoxBuffer({
@@ -154,10 +155,6 @@ function AddBox(position, height) {
   var shapeComp = stage.addComponentFromObject(shape)
   shapeComp.addRepresentation("buffer", {opacity: 0.5});
 }
-
-// stage.setParameters({
-//   backgroundColor: "white"
-// })
 
 function makeBox(center_x, center_y, center_z, size_x, size_y, size_z) {
 
@@ -174,10 +171,6 @@ function makeBox(center_x, center_y, center_z, size_x, size_y, size_z) {
   var shapeComp = stage.addComponentFromObject(shape)
   shapeComp.addRepresentation("buffer", {opacity: 0.5});
   components.push(shapeComp);
-
-  // pos_heights.forEach(function(item, index, array) {
-  //   AddBox(item[0], item[1]);
-  // })
 }
 
 
@@ -219,7 +212,7 @@ function createFileButton (label, properties, style) {
   return button
 }
 
-var topPosition = 12
+
 
 function getTopPosition (increment) {
   if (increment) topPosition += increment
