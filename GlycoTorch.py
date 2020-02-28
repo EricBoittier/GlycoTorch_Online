@@ -8,6 +8,7 @@ from Carbohydrate import *
 from Docking_Analysis import *
 from PrepareFFs import *
 from Carbohydrate_to_PDBQT import *
+from Protein_PDB import *
 from flask import send_file
 
 
@@ -195,14 +196,14 @@ def ligandAnalysis(name):
 @app.route('/ProteinPrep/<name>', methods=['GET', 'POST'])
 def proteinPrep(name):
     filename = os.path.join(app.config['UPLOAD_FOLDER'], name)
+    protein = Protein_PDB(filename)
 
     if request.method == 'POST' and request.form['download']:
-        pass
-        pdbqt = Carbohydrate_to_PDBQT(l)
-        pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
-        uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-        print(pdbqt.Carbohydrate.filepath)
-        return send_file(pdbqt.Carbohydrate.filepath+".pdbqt", as_attachment=True)
+
+        protein.write_pdbqt_file(app.config['UPLOAD_FOLDER'], filename)
+        #uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+
+        return send_file(filename+".pdbqt", as_attachment=True)
 
     elif request.method == 'GET':
         return render_template('ProteinPrep.html', name=name)
