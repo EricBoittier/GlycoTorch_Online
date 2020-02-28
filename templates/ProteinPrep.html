@@ -79,7 +79,18 @@ table.blueTable tr:nth-child(even) {
     document.addEventListener("DOMContentLoaded", function () {
         var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
         stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});
-    stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+        stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+
+        var center_x = -23 ;
+        var center_y = 54 ;
+        var center_z = 13 ;
+
+        var size_x = 20 ;
+        var size_y = 20 ;
+        var size_z = 20 ;
+
+        makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+
 
 
     function defaultStructureRepresentation( component ){
@@ -98,7 +109,7 @@ table.blueTable tr:nth-child(even) {
         sele: "water or ion",
         scale: 0.5
     } );
-}
+    }
 
 function distanceSelection ( o ){
     // get all atoms within 5 Angstrom of selection
@@ -126,17 +137,6 @@ if (!String.prototype.format) {
 
 
 
-<!--// Create NGL Stage object-->
-<!--var stage = new NGL.Stage( "viewport" );-->
-<!--// Handle window resizing-->
-<!--window.addEventListener( "resize", function( event ){-->
-<!--    stage.handleResize();-->
-<!--}, false );-->
-
-<!--var components = [];-->
-
-<!--// Load PDB entry 1CRN-->
-<!--stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});-->
 
 var color = new THREE.Color( 0x00ff00 );
 
@@ -179,15 +179,6 @@ function makeBox(center_x, center_y, center_z, size_x, size_y, size_z) {
   // })
 }
 
-var center_x = -23 ;
-var center_y = 54 ;
-var center_z = 13 ;
-
-var size_x = 20 ;
-var size_y = 20 ;
-var size_z = 20 ;
-
-makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
 
 function refresh(){
   for (var i = 0; i < components.length; i++) {
