@@ -192,4 +192,17 @@ def ligandAnalysis(name):
     elif request.method == 'GET':
         return render_template('LigandAnalysis.html', name=name, ligand=l)
 
+@app.route('/ProteinPrep/<name>', methods=['GET', 'POST'])
+def proteinPrep(name):
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], name)
 
+    if request.method == 'POST' and request.form['download']:
+        pass
+        pdbqt = Carbohydrate_to_PDBQT(l)
+        pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
+        uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+        print(pdbqt.Carbohydrate.filepath)
+        return send_file(pdbqt.Carbohydrate.filepath+".pdbqt", as_attachment=True)
+
+    elif request.method == 'GET':
+        return render_template('ProteinPrep.html', name=name)
