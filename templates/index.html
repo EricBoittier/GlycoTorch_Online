@@ -112,7 +112,7 @@ GlycoTorch is a python based web application for analysing Glycosaminoglycans (G
     <div class="boxed_blue">
 
 
-    <h3> Glycosaminoglycan analysis </h3>
+    <h3> Glycosaminoglycan analysis/docking </h3>
 
         <p1 padding: 0.2 em>
         Please select a .pdb file for analysis and/or to prepare for docking. <br>
@@ -139,51 +139,34 @@ GlycoTorch is a python based web application for analysing Glycosaminoglycans (G
         &#160;
     </p1>
 
-
-<!--     <div class="boxed_green">
-
-    <center>
-
-    <h3> ADV Vina Docking Analysis </h3>
+    <div class="boxed_blue">
 
 
-                            <p1 padding: 0.2 em>
-                            Output file (.pdbqt) <br>
-                            </p1>
-                            <form method=post enctype=multipart/form-data>
-                            <input type=file name=vina_output_file>
-                            </form>
+    <h3> Protein preparation and input file preparation </h3>
 
-                            <p1 padding: 0.2 em>
-                            Protein (.pdbqt) <br>
-                            </p1>
-                            <form method=post enctype=multipart/form-data>
-                            <input type=file name=vina_protein_file>
-                            </form>
+        <p1 padding: 0.2 em>
+        Please select a .pdb file of a protein to prepare for docking. <br>
+        </p1>
 
-                                    <p1 padding: 0.2 em>
-                            Known crystal pose, if available (.pdbqt) <br>
-                            </p1>
-                            <form method=post enctype=multipart/form-data>
-                            <input type=file name=vina_crystal_pose>
-                            </form>
+        <p1>
+            &#160;
+        </p1>
 
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="protein_to_analyse">
+    <p1>
+        &#160;
+    </p1>
 
-
-                            </td>
-
-        <form method=post enctype=multipart/form-data>
-        <input type=submit value="Start">
-        </form>
+      <input type="submit" name="analyse_protein">
+    </form>
 
     </center>
 
     </div>
 
-    <p1>
-        &#160;
-    </p1>
- -->
+
+
 
 {% include 'footer.html' %}
 
