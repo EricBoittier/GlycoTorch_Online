@@ -241,10 +241,12 @@ addElement(center_x_range)
 addElement(createElement("span", {
   innerText: "Size x",
   width: "200px"
-}, { top: getTopPosition(20), left: "12px", color: "black", width: "200px" }))
+}, { top: getTopPosition(20), left: "12px", color: "black" }))
 var size_x_range = createElement("input", {
   type: "range", value: 10, min: 0, max: 100, step: 0.5
-}, { top: getTopPosition(16), left: "12px" })
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
+
+
 size_x_range.oninput = function (e) {
   size_x = parseFloat(e.target.value)
   refresh();
