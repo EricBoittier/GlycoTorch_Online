@@ -241,5 +241,5 @@ class Protein_PDB(object):
             string = " " + string
         return string
 
-P_PDB = Protein_PDB("/home/eric/Desktop/Tutorial/2axm_protein.pdb")
-P_PDB.write_pdbqt_file("/home/eric/Desktop/Tutorial/", "test_protein.pdbqt")
+# P_PDB = Protein_PDB("/home/eric/Desktop/Tutorial/2axm_protein.pdb")
+# P_PDB.write_pdbqt_file("/home/eric/Desktop/Tutorial/", "test_protein.pdbqt")
