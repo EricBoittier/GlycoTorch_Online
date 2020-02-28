@@ -201,9 +201,9 @@ def proteinPrep(name):
     if request.method == 'POST' and request.form['download']:
 
         protein.write_pdbqt_file(app.config['UPLOAD_FOLDER'], filename)
-        #uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+        uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
 
-        return send_file(filename+".pdbqt", as_attachment=True)
+        return send_file(os.path.join(uploads, filename), as_attachment=True)
 
     elif request.method == 'GET':
         return render_template('ProteinPrep.html', name=name)
