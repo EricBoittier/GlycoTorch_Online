@@ -125,6 +125,12 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
 
+
+@app.route("/Tutorials/")
+def tutorials():
+    return render_template("Tutorials.html")
+
+
 @app.route("/summary_of_results/")
 def summary_of_results():
     l = os.listdir("/home/EricBoittier/mysite/data/results/glycosidic/0_0/small")
