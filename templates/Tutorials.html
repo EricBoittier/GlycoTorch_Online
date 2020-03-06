@@ -220,7 +220,14 @@
         <td>
             <p> Download the executable for GlycoTorch Vina (<a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Windows</a>,
     <a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Linux</a>) and save it in a folder with the other files generated in previous steps.</p>
-                    <p1>
+
+            <p> In this example, the parameters for the CHI coefficient and cutoff should be set to 2 and 1 respectively.
+            These values are good for large GAG ligands (tetrasaccharides or longer) because
+                it restricts them from exploring some higher energy conformations that would only be accessible for smaller sugars.
+                For smaller sugars, CHI coefficient and cutoff values are recommended to be set to 1 and 0, respectively.
+            </p>
+
+            <p1>
             &#160;
         </p1>
 
@@ -229,7 +236,7 @@
             <p> Use the cd command to change directories to folder containing your files.</p>
             <pre> (e.g.) cd C:\Users\USERNAME\Desktop\Tutorial </pre>
             <p> To run docking: </p>
-            <pre> GlycoTorchVina.exe --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf </pre>
+            <pre> GlycoTorchVina.exe --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf --chi_coeff 2 --chi_cutoff 1</pre>
 
             <p1>
             &#160;
@@ -241,12 +248,13 @@
             <p> Use the cd command to change directories to folder containing your files.</p>
             <pre> (e.g.) cd /home/USERNAME/Desktop/Tutorial </pre>
             <p> To run docking: </p>
-            <pre> GlycoTorchVina --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf </pre>
+            <pre> GlycoTorchVina --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf --chi_coeff 2 --chi_cutoff 1 </pre>
 
 
         </td>
     </tr>
     </table>
+
 
 
 </div>

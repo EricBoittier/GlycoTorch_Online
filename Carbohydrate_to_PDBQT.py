@@ -631,6 +631,9 @@ class Carbohydrate_to_PDBQT(object):
             else:
                 ADT = "N"
 
+        """
+        These lines have been commented out because they are not used in the standard program
+        """
         # if self.is_carboxylate_carbon(atom):
         #     name = self.pad_before("@CA", 4) + " "
         # if self.is_sulfate(atom):
