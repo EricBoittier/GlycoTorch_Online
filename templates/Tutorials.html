@@ -114,7 +114,7 @@
 
     <h1> <u> Tutorials </u></h1>
 
-<div class="boxed_gold">
+<img class="boxed_gold">
 
     <h2> Docking with GlycoTorch Vina</h2>
 
@@ -159,6 +159,9 @@
     </tr>
     </table>
 
+    
+    <img src="https://ericboittier.pythonanywhere.com/static/tutorial_step2.PNG"> preparing the ligand </img>
+    
     <h3> 2.0 - Prepare the ligand </h3>
 
     <table>
@@ -166,15 +169,28 @@
         <td>
             <p> On the GlycoTorch website, navigate to "Tools → GAG ligand input file preparation". </p>
             <p> Click "Choose File", and upload the PDB file of the ligand (2axm_ligand.pdb), then hit "Submit".  </p>
-            <p> To save the file, click on "File → Save PDB..." and save the file as 2axm_Hs.pdb.</p>
-            <p> We also want to save a file containing only the ligand. To do this, click "Select → Structure → ligand"
-                and again click on "File → Save PDB...". This time, check the box that says "Save selected atoms only"
-                and save the file as 2axm_ligand.pdb.</p>
+            <p> Click "Generate GlycoTorch Vina Input" to download the file. In this step, appropriate atom types are added to the ligand to be compatible with the extra parameters in GlycoTorch Vina.</p>
+            <p> (Optional) Angles of the glycosidic torsions (φ and ψ) and Cremer-Pople parameters describing ring conformations are printed here.
+                These can be compared to the expected literature values.</p>
         </td>
     </tr>
     </table>
 
+    <img src="https://ericboittier.pythonanywhere.com/static/tutorial_step3.PNG"> preparing the protein and input file </img>
 
+    <h3> 3.0 - Generate files to set the search space </h3>
+
+    <table>
+    <tr>
+        <td>
+            <p> On the GlycoTorch website, navigate to "Tools → Protein input file preparation". </p>
+            <p> Click "Choose File", and upload the PDB file of the original protein with added hydrogen atoms (2axm_Hs.pdb), then hit "Submit".  </p>
+            <p> Click "Generate GlycoTorch Vina Input" to download the file. In this step, appropriate atom types are added to the ligand to be compatible with the extra parameters in GlycoTorch Vina.</p>
+            <p> (Optional) Angles of the glycosidic torsions (φ and ψ) and Cremer-Pople parameters describing ring conformations are printed here.
+                These can be compared to the expected literature values.</p>
+        </td>
+    </tr>
+    </table>
 
 
 
