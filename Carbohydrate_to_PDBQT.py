@@ -631,12 +631,12 @@ class Carbohydrate_to_PDBQT(object):
             else:
                 ADT = "N"
 
-        if self.is_carboxylate_carbon(atom):
-            name = self.pad_before("@CA", 4) + " "
-        if self.is_sulfate(atom):
-            name = self.pad_before("@S", 4) + " "
-        if self.is_Nsulfate(atom):
-            name = self.pad_before("@NS", 4) + " "
+        # if self.is_carboxylate_carbon(atom):
+        #     name = self.pad_before("@CA", 4) + " "
+        # if self.is_sulfate(atom):
+        #     name = self.pad_before("@S", 4) + " "
+        # if self.is_Nsulfate(atom):
+        #     name = self.pad_before("@NS", 4) + " "
 
 
         line = "ATOM{}{}{}{}{}{} {} {}  0.00  0.00     0.000 {}\n".format(id, name, ligand_type, chain, res_id,
