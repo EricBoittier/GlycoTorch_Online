@@ -155,11 +155,15 @@
         <td>
             <p> For this tutorial, we will be using the crystal structure of heparin with a fibroblast growth factor (PDB code: 2AXM),
                 available for download from the RCSB PDB (<a href="https://www.rcsb.org/structure/2axm">here</a>).</p>
+
             <p> Once downloaded, open the structure using Chimera. Add hydrogen atoms by clicking on "Tools → Structure Editing → AddH"</p>
+
             <p> To save the file, click on "File → Save PDB..." and save the file as 2axm_Hs.pdb.</p>
+
             <p> We also want to save a file containing only the ligand. To do this, click "Select → Structure → ligand"
                 and again click on "File → Save PDB...". This time, check the box that says "Save selected atoms only"
                 and save the file as 2axm_ligand.pdb.</p>
+
         </td>
     </tr>
     </table>
@@ -174,11 +178,15 @@
     <tr>
         <td>
             <p> On the GlycoTorch website, navigate to "Tools → GAG ligand input file preparation". </p>
+
             <p> Click "Choose File", and upload the PDB file of the ligand (2axm_ligand.pdb), then hit "Submit".  </p>
+
             <p> Click "Generate GlycoTorch Vina Input" to download the file. In this step, appropriate atom types are
                 added to the ligand to be compatible with the extra parameters in GlycoTorch Vina.</p>
+
             <p> (Optional) Angles of the glycosidic torsions (φ and ψ) and Cremer-Pople parameters describing ring conformations are printed here.
                 These can be compared to the expected literature values.</p>
+
         </td>
     </tr>
     </table>
@@ -191,16 +199,47 @@
     <tr>
         <td>
             <p> On the GlycoTorch website, navigate to "Tools → Protein input file preparation". </p>
+
             <p> Click "Choose File", and upload the PDB file of the original protein with added hydrogen atoms (2axm_Hs.pdb), then hit "Submit".  </p>
+
             <p> Using the sliders on the top, left-hand side of the page, adjust the size and position of the purple box
                 to set the search space to explore when docking. This should include all amino acid side chains in the binding site.</p>
+
             <p> Click "Save Config File" and download the file that sets the parameters for docking.
                 Default parameters are given here and can be changed by the user as necessary. </p>
+
             <p> Click "Generate Protein PDBQT File" and download the structure of the receptor with appropriate atom types for GlycoTorch Vina. </p>
+
         </td>
     </tr>
     </table>
 
+    <h3> 4.0 - Docking with GlycoTorch Vina </h3>
+    <img class="one" src="https://ericboittier.pythonanywhere.com/static/tutorial_step3.PNG">
+    <table>
+    <tr>
+        <td>
+            <p> Download the executable for GlycoTorch Vina (<a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Windows</a>,
+    <a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Linux</a>) and save it in a folder with the other files generated in previous steps.</p>
+            <p> <b> Windows </b> </p>
+            <p> Open the command prompt app from the start menu.</p>
+            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> cd C:\Users\localadmin\Desktop\Tutorial </pre>
+            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> GlycoTorchVina.exe --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf </pre>
+
+            <p> <b> Linux </b> </p>
+            <p> Open the terminal app from the start menu.</p>
+            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> cd /home/USERNAME/Desktop/Tutorial </pre>
+            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> GlycoTorchVina --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf </pre>
+
+
+
+        </td>
+    </tr>
+    </table>
 
 
 </div>
