@@ -215,26 +215,33 @@
     </table>
 
     <h3> 4.0 - Docking with GlycoTorch Vina </h3>
-    <img class="one" src="https://ericboittier.pythonanywhere.com/static/tutorial_step3.PNG">
     <table>
     <tr>
         <td>
             <p> Download the executable for GlycoTorch Vina (<a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Windows</a>,
     <a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Linux</a>) and save it in a folder with the other files generated in previous steps.</p>
-            <p> <b> Windows </b> </p>
+                    <p1>
+            &#160;
+        </p1>
+
+            <center> <b> Windows </b> </center>
             <p> Open the command prompt app from the start menu.</p>
             <p> Use the cd command to change directories to folder containing your files.</p>
-            <pre> cd C:\Users\localadmin\Desktop\Tutorial </pre>
-            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> (e.g.) cd C:\Users\USERNAME\Desktop\Tutorial </pre>
+            <p> To run docking: </p>
             <pre> GlycoTorchVina.exe --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf </pre>
 
-            <p> <b> Linux </b> </p>
-            <p> Open the terminal app from the start menu.</p>
-            <p> Use the cd command to change directories to folder containing your files.</p>
-            <pre> cd /home/USERNAME/Desktop/Tutorial </pre>
-            <p> Use the cd command to change directories to folder containing your files.</p>
-            <pre> GlycoTorchVina --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf </pre>
+            <p1>
+            &#160;
+        </p1>
 
+
+            <center> <b> Linux </b> </center>
+            <p> Open the terminal app.</p>
+            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> (e.g.) cd /home/USERNAME/Desktop/Tutorial </pre>
+            <p> To run docking: </p>
+            <pre> GlycoTorchVina --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf </pre>
 
 
         </td>
