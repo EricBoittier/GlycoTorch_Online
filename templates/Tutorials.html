@@ -95,6 +95,11 @@
                 border-radius: 25px;
     }
 
+    img.one {
+  height: 50%;
+  width: 50%;
+}
+
 <!--#foo table {-->
 <!--  border-collapse:collapse;-->
 <!--  border:0px;-->
@@ -114,7 +119,7 @@
 
     <h1> <u> Tutorials </u></h1>
 
-<img class="boxed_gold">
+<div class="boxed_gold">
 
     <h2> Docking with GlycoTorch Vina</h2>
 
@@ -160,34 +165,38 @@
     </table>
 
     
-    <img src="https://ericboittier.pythonanywhere.com/static/tutorial_step2.PNG"> preparing the ligand </img>
+
     
     <h3> 2.0 - Prepare the ligand </h3>
+    <img class="one" src="https://ericboittier.pythonanywhere.com/static/tutorial_step2.PNG">
 
     <table>
     <tr>
         <td>
             <p> On the GlycoTorch website, navigate to "Tools → GAG ligand input file preparation". </p>
             <p> Click "Choose File", and upload the PDB file of the ligand (2axm_ligand.pdb), then hit "Submit".  </p>
-            <p> Click "Generate GlycoTorch Vina Input" to download the file. In this step, appropriate atom types are added to the ligand to be compatible with the extra parameters in GlycoTorch Vina.</p>
+            <p> Click "Generate GlycoTorch Vina Input" to download the file. In this step, appropriate atom types are
+                added to the ligand to be compatible with the extra parameters in GlycoTorch Vina.</p>
             <p> (Optional) Angles of the glycosidic torsions (φ and ψ) and Cremer-Pople parameters describing ring conformations are printed here.
                 These can be compared to the expected literature values.</p>
         </td>
     </tr>
     </table>
 
-    <img src="https://ericboittier.pythonanywhere.com/static/tutorial_step3.PNG"> preparing the protein and input file </img>
+
 
     <h3> 3.0 - Generate files to set the search space </h3>
-
+    <img class="one" src="https://ericboittier.pythonanywhere.com/static/tutorial_step3.PNG">
     <table>
     <tr>
         <td>
             <p> On the GlycoTorch website, navigate to "Tools → Protein input file preparation". </p>
             <p> Click "Choose File", and upload the PDB file of the original protein with added hydrogen atoms (2axm_Hs.pdb), then hit "Submit".  </p>
-            <p> Click "Generate GlycoTorch Vina Input" to download the file. In this step, appropriate atom types are added to the ligand to be compatible with the extra parameters in GlycoTorch Vina.</p>
-            <p> (Optional) Angles of the glycosidic torsions (φ and ψ) and Cremer-Pople parameters describing ring conformations are printed here.
-                These can be compared to the expected literature values.</p>
+            <p> Using the sliders on the top, left-hand side of the page, adjust the size and position of the purple box
+                to set the search space to explore when docking. This should include all amino acid side chains in the binding site.</p>
+            <p> Click "Save Config File" and download the file that sets the parameters for docking.
+                Default parameters are given here and can be changed by the user as necessary. </p>
+            <p> Click "Generate Protein PDBQT File" and download the structure of the receptor with appropriate atom types for GlycoTorch Vina. </p>
         </td>
     </tr>
     </table>
