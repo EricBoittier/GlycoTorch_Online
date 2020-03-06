@@ -198,6 +198,9 @@ class Protein_PDB(object):
 
         ADT = atom.atomname
 
+        if ADT == "H":
+            return False
+
         # if atom.atomname == "O" and len(atom.connections) == 2:
         #     if not self.atoms[atom.connections[0]].atomname.__contains__("H") \
         #             or not self.atoms[atom.connections[0]].atomname.__contains__("H"):
@@ -224,10 +227,9 @@ class Protein_PDB(object):
 
         line = "ATOM{}{}{}{}{}{} {} {}  0.00  0.00     0.000 {}\n".format(id, name, ligand_type, chain, res_id,
                                                                           x, y, z, ADT)
-        if write_atom:
-            return line
-        else:
-            return False
+
+        return line
+
 
     def pad_after(self, string, pad):
         string = str(string)
