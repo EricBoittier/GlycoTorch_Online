@@ -4,7 +4,7 @@ from Vina_Input import *
 import os
 import shutil
 
-for ligand in os.listdir("./data/ligands/pdb"):
+for ligand in os.listdir("C:\Users\localadmin\Documents\GitHub\GlycoTorch_Online\docking\pdb_ligands_redo"):
     if not ligand.__contains__(".DS"):
         print(ligand)
         l = ligand.split(".")[0]

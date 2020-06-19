@@ -41,6 +41,10 @@ class VinaInput(object):
         self.sizeY = int(abs(self.yMax - self.yMin))
         self.sizeZ = int(abs(self.zMax - self.zMin))
 
+        print(self.sizeX+8)
+        print(self.sizeY+8)
+        print(self.sizeZ+8)
+
     def getADBox(self):
         """
 
