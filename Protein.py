@@ -37,7 +37,8 @@ class ProteinPDB(PDB):
         self.pH = "-"
         self.heteroatoms = []
         self.DOI = ""
-        self.ligands = list(nx.connected_component_subgraphs(self.graph))
+        print(self.graph)
+        self.ligands = list(self.graph.subgraph(c) for c in nx.connected_components(self.graph))
         self.all_ligands_list = []
         temp = []
 
