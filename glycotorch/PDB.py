@@ -107,7 +107,7 @@ class PDB(object):
                                 atom_number,
                                 int(connection))
 
-    def get_atoms(self) -> list[Atom]:
+    def get_atoms(self) -> list:
         keys = list(self.atoms.keys())
         keys.sort()
         return [self.atoms[k] for k in keys]
