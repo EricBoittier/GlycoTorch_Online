@@ -20,12 +20,16 @@ class Atom(object):
         self.z = float(line[46:53].strip())
         self.atomname = line[76:79].strip()
 
-        if len(self.atomname) > 0 and len(self.atomname) < 3:
+        #  if the atom name is a single letter,
+        #  then it is the atom type
+        if 0 < len(self.atomname) < 3:
             self.atom_type = self.atomname
 
         self.connections = []
-        self.is_axial = None  # True for axial, False for equitorial, None for neither or has not been set...
-        self.sugar_position = None  # Can be C1, C2, C3, C5,  O5 or GO (for glycosidic oxygen)
+        self.is_axial = None  # True for axial,
+        # False for equitorial, None for neither or has not been set...
+        self.sugar_position = None  # Can be C1, C2, C3, C5,  O5 or GO
+        # (for glycosidic oxygen)
 
     def __repr__(self):
         return repr(self.line)
@@ -33,8 +37,9 @@ class Atom(object):
     def get_connections(self):
         return self.connections
 
-    def add_connection(self, ID):
-        self.connections.append(ID)
+    def add_connection(self, id):
+        if id not in self.connections:
+            self.connections.append(id)
 
     def get_is_axial(self):
         return self.is_axial
@@ -47,7 +52,7 @@ class Atom(object):
 
     def set_sugar_position(self, pos):
         self.sugar_position = pos
-        if not pos == "GO":
+        if pos != "GO":
             self.atom_type = pos
 
     def get_sugar_position(self):

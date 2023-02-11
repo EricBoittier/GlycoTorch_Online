@@ -1,43 +1,44 @@
-from flask import Flask
 from flask import flash, request, redirect
 from flask import render_template
 from flask import send_file
 from flask import send_from_directory
-from flask_cors import CORS
 from werkzeug.utils import secure_filename
-import os
 
-import glycotorch.Docking_Analysis
-from glycotorch.Carbohydrate_to_PDBQT import Carbohydrate_to_PDBQT
-from glycotorch.Protein_PDB import Protein_PDB
-
-app = Flask(__name__)
-app.secret_key = "super secret key"
+from glycotorch.Carbohydrate_to_PDBQT import *
+from glycotorch.Docking_Analysis import *
+from glycotorch.Protein_PDB import *
+from app import app
 
 UPLOAD_FOLDER = '/tmp'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+DATA_FOLDER = '/data/ligands/pdb'
+app.config['DATA_FOLDER'] = DATA_FOLDER
+
+GLYCOSIDIC_FOLDER = '/notebooks/glycosidic'
+app.config['GLYCOSIDIC_FOLDER'] = GLYCOSIDIC_FOLDER
+
 app.config['DEBUG'] = True
 
-CORS(app)
+# CORS(app)
+
 ALLOWED_EXTENSIONS = {'pdb', 'pdbqt'}
 
 
-def allowed_file(filename: str):
-    """Check if the file is allowed to be uploaded"""
+def allowed_file(filename):
     return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# @app.route('/')
+# def home():
+#     return "Hello world!"
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    """Upload a file.
-
-    :return:
-    """
-    #  check if the post request has the file part
     if request.method == 'POST':
         # print(request.form.__dict__)
         if 'analyse_ligand' in request.form:
+
             # check if the post request has the file part
             if 'ligand_to_analyse' not in request.files:
                 flash('No file')
@@ -51,8 +52,7 @@ def upload_file():
                 return redirect(request.url)
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'],
-                                       filename))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 return redirect('/LigandAnalysis/' + filename)
 
         if 'analyse_protein' in request.form:
@@ -98,17 +98,16 @@ def upload_file():
                 vina_output_filename = secure_filename(vina_output_file.filename)
                 vina_protein_filename = secure_filename(vina_protein_file.filename)
                 vina_crystal_pose_filename = secure_filename(vina_crystal_pose.filename)
-                #  save the file
+
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], vina_output_filename))
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], vina_protein_filename))
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], vina_crystal_pose_filename))
 
                 tmp = "/home/EricBoittier/mysite/"
 
-                glycotorch.Docking_Analysis.docking_analysis(tmp + "/" + vina_protein_filename,
-                                 tmp + "/" + vina_output_filename,
-                                 tmp + "/" + vina_crystal_pose_filename,
-                                 location=tmp)
+                docking_analysis(tmp + "/" + vina_protein_filename, tmp + "/" + vina_output_filename,
+                                 tmp + "/" + vina_crystal_pose_filename, location=tmp)
+
                 return render_template('Inbound_Docking_Analysis.html', )
 
     return render_template('index.html')
@@ -185,13 +184,15 @@ def get_uploads():
 @app.route('/LigandAnalysis/<name>', methods=['GET', 'POST'])
 def ligandAnalysis(name):
     filename = os.path.join(app.config['UPLOAD_FOLDER'], name)
-    l = glycotorch.Carbohydrate(filename)
+    l = Carbohydrate(filename)
 
     if request.method == 'POST' and request.form['download']:
         pdbqt = Carbohydrate_to_PDBQT(l)
         pdbqt.save_flex(path=app.config['UPLOAD_FOLDER'])
         uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+        print(pdbqt.carbohydrate.filepath)
         return send_file(pdbqt.carbohydrate.filepath + ".pdbqt", as_attachment=True)
+
     elif request.method == 'GET':
         return render_template('LigandAnalysis.html', name=name, ligand=l)
 
@@ -202,9 +203,13 @@ def proteinPrep(name):
     protein = Protein_PDB(filename)
 
     if request.method == 'POST' and request.form['download']:
+
         new_name = str(filename.split(".")[0]) + ".pdbqt"
+
         protein.write_pdbqt_file(app.config['UPLOAD_FOLDER'], new_name)
+
         uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+
         return send_file(os.path.join(uploads, new_name), as_attachment=True)
 
     elif request.method == 'GET':
