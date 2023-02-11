@@ -1,5 +1,5 @@
-from Dihedral import *
-from PDB_Abbreviation_to_Sugar_Name import *
+from glycotorch.Dihedral import *
+from glycotorch.PDB_Abbreviation_to_Sugar_Name import *
 
 
 class Linkage(object):

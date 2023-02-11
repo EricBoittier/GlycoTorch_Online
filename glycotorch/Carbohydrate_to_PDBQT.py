@@ -1,8 +1,8 @@
-import Angle
+import glycotorch.Angle as Angle
 import os
 import argparse
 
-from Carbohydrate import Carbohydrate
+from glycotorch.Carbohydrate import Carbohydrate
 
 
 class Carbohydrate_to_PDBQT(object):
@@ -10,11 +10,18 @@ class Carbohydrate_to_PDBQT(object):
 
     def __init__(self, carbohydrate):
         super(Carbohydrate_to_PDBQT, self).__init__()
+        self.branch_count = 0
         self.carbohydrate = carbohydrate
         self.atoms = self.carbohydrate.atoms
         self.resnum = 1
         self.c = 1
         self.atom_id_to_c = {}
+
+        self.functional_groups = []
+        self.GO_ids = []
+        self.branches = []
+        self.branch_counts = []
+        self.end_branches = []
 
     def save_rigid(self, path=None):
         if path:
@@ -119,23 +126,19 @@ class Carbohydrate_to_PDBQT(object):
 
         tmp = open("tmp.pdb", "w")
         #  glycosidic oxygen ids (i.e. the main branch points)
-        GO_ids = []
-        end_branches = []
-        branch_count = 0
         branch_str = "BRANCH {} {}\n"
         end_branch_str = "ENDBRANCH {} {}\n"
-
+        tmp.write("ROOT\n")
         #  loop through the linkages in order
-        for index in range(len(self.carbohydrate.ordered_linkages)):
-            linkage = self.carbohydrate.ordered_linkages[index]
-            GO_ids.append(linkage.GO.id)
+        for index, linkage in enumerate(
+                self.carbohydrate.ordered_linkages):
+            # keep track of glycosidic oxygen ids
+            self.GO_ids.append(linkage.GO.id)
 
-            if index == 0:
-                tmp.write("ROOT\n")
-            else:
+            if index != 0:
                 l = self.carbohydrate.ordered_linkages[index - 1]
                 tmp.write(branch_str.format(l.GO.id, l.CX.id))
-                branch_count += 1
+                self.branch_count += 1
 
             #  write ring atoms for ring1
             for atom in linkage.ring1.ring:
@@ -147,7 +150,7 @@ class Carbohydrate_to_PDBQT(object):
             functional_group_atoms = []
             connected_atom = False
             for a in linkage.ring1.c1_functional_group:
-                if self.atoms[a].id not in GO_ids:
+                if self.atoms[a].id not in self.GO_ids:
                     if self.atoms[a].id in linkage.ring1.c1.connections:
                         connected_atom = self.atoms[a]
                     else:

@@ -1,4 +1,4 @@
-from Dihedral import *
+from glycotorch.Dihedral import *
 import math
 
 endocyclic_torsional_angles = {"1C4": [60.0, -60.0, 60.0, -60.0, 60.0, -60.0],

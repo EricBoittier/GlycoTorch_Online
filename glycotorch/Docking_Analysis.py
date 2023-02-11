@@ -1,12 +1,12 @@
-from Vina_Output import *
-from RMSD_Vina import *
+from glycotorch.Vina_Output import *
+from glycotorch.RMSD_Vina import *
 # import markov_clustering as mc
 # import networkx as nx
 import matplotlib.pyplot as plt
 import os
 import os.path
 from matplotlib.pylab import show, cm, axis
-from PDBQT_to_PDB import *
+from glycotorch.PDBQT_to_PDB import *
 
 """
 Takes output structures, protein structure and crystal pose

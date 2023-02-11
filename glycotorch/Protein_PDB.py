@@ -1,6 +1,6 @@
-from Atom import *
+from glycotorch.Atom import *
 import networkx as nx
-from PDBQT_to_PDB import *
+from glycotorch.PDBQT_to_PDB import *
 import os
 
 

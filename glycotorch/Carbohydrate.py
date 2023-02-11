@@ -1,10 +1,9 @@
-from Linkage import *
-from LinkageError import *
-from PDB import *
-from Ring import *
-from RingError import RingError
-from Geometry import get_edges_from_distance_matrix
-from Carbohydrate_to_PDBQT import Carbohydrate_to_PDBQT
+from glycotorch.Linkage import *
+from glycotorch.LinkageError import *
+from glycotorch.PDB import *
+from glycotorch.Ring import *
+from glycotorch.RingError import RingError
+from glycotorch.Geometry import get_edges_from_distance_matrix
 
 class Carbohydrate(PDB):
     def __init__(self, filename):
@@ -370,15 +369,7 @@ class Carbohydrate(PDB):
         return ring_hash_1 * ring_hash_2
 
 
-# c = Carbohydrate("../../Downloads/Unsulphated_HS_tetramer_glycam.pdb")
-c = Carbohydrate("../../../Downloads/1-2.pdb")
-print(c.ordered_linkages[0].__dict__)
-for _ in c.Rings.values():
-    print(_.print_functional_groups())
-print(c.get_name())
-pdbqt = Carbohydrate_to_PDBQT(c)
-pdbqt.save_flex()
-print(c.getSNFGname())
+
 
 if __name__ == "__main__":
     from sys import argv
