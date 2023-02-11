@@ -33,6 +33,14 @@ class Carbohydrate_to_PDBQT(object):
 
     def process_ring(self, ring, link_index):
         linkage = self.carbohydrate.ordered_linkages[link_index]
+        # keep track of glycosidic oxygen ids
+        self.GO_ids.append(linkage.GO.id)
+
+        if link_index != 0:
+            l = self.carbohydrate.ordered_linkages[link_index - 1]
+            self.tmp.write("BRANCH {} {}\n".format(l.GO.id, l.CX.id))
+            self.branch_count += 1
+
         #  write ring atoms for ring1
         for atom in ring.ring_cs:
             self.tmp.write(self.get_pdbqt_line(self.atoms[atom.id]))
@@ -41,6 +49,7 @@ class Carbohydrate_to_PDBQT(object):
         for ci, func_group in enumerate(ring.get_functional_groups()):
             #  write functional groups for ring1
             ci = ring.ring_cs[ci]
+            print("func group:", func_group)
             functional_group_atoms = []
             connected_atom = False
             for a in func_group:
@@ -49,9 +58,9 @@ class Carbohydrate_to_PDBQT(object):
                         connected_atom = self.atoms[a]
                     else:
                         functional_group_atoms.append(self.atoms[a])
-
+            print("fga:", functional_group_atoms)
             if connected_atom is not False:
-                if len(func_group) > 2:
+                if len(functional_group_atoms) > 1:
                     self.branches_to_write_after_root.append(
                         self.branch_str.format(
                             ci.id,
@@ -60,10 +69,10 @@ class Carbohydrate_to_PDBQT(object):
                     self.branches_to_write_after_root.append(connected_atom)
                     self.branch_count += 1
                 else:
-                    for a in func_group:
-                        self.tmp.write(self.get_pdbqt_line(self.atoms[a]))
+                    for a in functional_group_atoms:
+                        self.tmp.write(self.get_pdbqt_line(a))
 
-            if len(func_group) > 2:
+            if len(functional_group_atoms) > 2:
                 for a in functional_group_atoms:
                     self.branches_to_write_after_root.append(a)
 
@@ -211,8 +220,6 @@ class Carbohydrate_to_PDBQT(object):
         #  loop through the linkages in order
         for link_index, linkage in enumerate(
                 self.carbohydrate.ordered_linkages):
-            # keep track of glycosidic oxygen ids
-            self.GO_ids.append(linkage.GO.id)
             #  process ring1
             self.process_ring(linkage.ring1, link_index)
 
@@ -518,11 +525,14 @@ class Carbohydrate_to_PDBQT(object):
             string = " " + string
         return string
 
+c = Carbohydrate("/Users/ericboittier/Downloads/Unsulphated_HS_tetramer_glycam.pdb")
+pdbqt = Carbohydrate_to_PDBQT(c)
+pdbqt.save_flex()
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
-    parser.add_argument("--file", type=str, default=None, help="full path to file")
-    args = parser.parse_args()
-    c = Carbohydrate(args.file)
-    pdbqt = Carbohydrate_to_PDBQT(c)
-    pdbqt.save_flex()
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
+#     parser.add_argument("--file", type=str, default=None, help="full path to file")
+#     args = parser.parse_args()
+#     c = Carbohydrate(args.file)
+#     pdbqt = Carbohydrate_to_PDBQT(c)
+#     pdbqt.save_flex()

@@ -70,7 +70,9 @@ class Ring(object):
             #  if it is not in the ring
             #  and not in the glycosidic atoms, then it is
             #  part of the functional group
-            if x not in self.ring and x not in glycosidic_atoms:
+            if x not in self.ring and \
+                    x not in glycosidic_atoms\
+                    and not self.atoms[x].atom_type.__contains__("H"):
                 functional_group.append(x)
         #  now loop through the functional group and
         #  find all the atoms that are connected

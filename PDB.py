@@ -32,8 +32,7 @@ class PDB(object):
                                   in self.get_atoms()])
 
         self.find_rings()
-        self.setHashToRingAtoms()
-        self.nameRings()
+
 
     def set_connections(self):
         self.connections = nx.to_dict_of_lists(self.graph)
@@ -42,6 +41,8 @@ class PDB(object):
 
     def find_rings(self):
         self.rings = list(nx.cycle_basis(self.graph))
+        self.setHashToRingAtoms()
+        self.nameRings()
 
     def add_edges(self, edges):
         self.graph.add_edges_from(edges)
