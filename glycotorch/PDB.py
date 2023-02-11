@@ -112,7 +112,7 @@ class PDB(object):
         keys.sort()
         return [self.atoms[k] for k in keys]
 
-    def get_atom_types(self) -> list[str]:
+    def get_atom_types(self) -> list:
         return [a.atom_type for a in self.get_atoms()]
 
     def getAllConnections(self):
