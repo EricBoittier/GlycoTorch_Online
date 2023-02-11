@@ -1,0 +1,4 @@
+networkx~=2.8.6
+Flask~=2.2.2
+Werkzeug~=2.2.2
+numpy~=1.14.5
