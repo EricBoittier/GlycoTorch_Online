@@ -54,6 +54,6 @@ def get_edges_from_distance_matrix(
     edges = []
     for i in range(len(dm)):
         for j in range(len(dm)):
-            if i < j and dm[i, j] < (radii[i] + radii[j])*0.6:
+            if i < j and dm[i, j] < (radii[i] + radii[j])*0.5:
                 edges.append((i, j))
     return edges

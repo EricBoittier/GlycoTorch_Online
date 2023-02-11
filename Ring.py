@@ -3,9 +3,11 @@ from Dihedral import *
 from PDB_Abbreviation_to_Sugar_Name import *
 from Get_IUPAC_Ring_Conformation import *
 
+
 class Ring(object):
     """
     A class to handle ring operations
+
     """
 
     def __init__(self, c1, c2, c3, c4, c5, o5, atoms):

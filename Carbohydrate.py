@@ -57,6 +57,7 @@ class Carbohydrate(PDB):
     def assign_ring_positions(self):
         """Assign the ring positions to the atoms in the ring based on
         the usual Carbohydrate nomenclature.
+
         :return: None
         """
         for ring in self.rings:
@@ -371,3 +372,15 @@ class Carbohydrate(PDB):
         return ring_hash_1 * ring_hash_2
 
 
+
+
+if __name__ == "__main__":
+    from sys import argv
+    args = argv[1:]
+    if len(args) != 1:
+        print("Usage: python3 carbohydrate.py <pdb file>")
+        exit(1)
+    c = Carbohydrate(args[0])
+    print(c.ordered_linkages[0].__dict__)
+    for _ in c.Rings.values():
+        print(_.print_functional_groups())
