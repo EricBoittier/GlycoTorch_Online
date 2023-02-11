@@ -164,8 +164,8 @@ class Carbohydrate(PDB):
             ring1 = self.get_ring(C1.getID())
             ring2 = self.get_ring(CX.getID())
 
-            self.Rings[ring1].get_functional_groups(glycosidic_atoms)
-            self.Rings[ring2].get_functional_groups(glycosidic_atoms)
+            self.Rings[ring1].set_functional_groups(glycosidic_atoms)
+            self.Rings[ring2].set_functional_groups(glycosidic_atoms)
 
             self.SugarGraph.add_node(ring1)
             self.SugarGraph.add_node(ring2)
