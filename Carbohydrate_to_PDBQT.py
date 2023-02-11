@@ -1,3 +1,4 @@
+import Angle
 from Angle import *
 from Carbohydrate import *
 import os
@@ -9,77 +10,148 @@ import argparse
 class Carbohydrate_to_PDBQT(object):
     """docstring for Carbohydrate_to_PDBQT"""
 
-    def __init__(self, Carbohydrate):
+    def __init__(self, carbohydrate):
         super(Carbohydrate_to_PDBQT, self).__init__()
-        self.Carbohydrate = Carbohydrate
-        self.atoms = self.Carbohydrate.atoms
+        self.branch_count = 0
+        self.carbohydrate = carbohydrate
+        self.atoms = self.carbohydrate.atoms
         self.resnum = 1
         self.c = 1
         self.atom_id_to_c = {}
 
+        self.functional_groups = []
+        self.GO_ids = []
+        self.branches = []
+        self.branch_counts = []
+        self.end_branches = []
+        self.branches_to_write_after_root = []
+
+        self.tmp = None
+
+        self.branch_str = "BRANCH {} {}\n"
+        self.end_branch_str = "ENDBRANCH {} {}\n"
+
+    def process_ring(self, ring, link_index):
+        linkage = self.carbohydrate.ordered_linkages[link_index]
+        #  write ring atoms for ring1
+        for atom in ring.ring_cs:
+            self.tmp.write(self.get_pdbqt_line(self.atoms[atom.id]))
+
+        #  loop through functional_groups in ring1
+        for ci, func_group in enumerate(ring.get_functional_groups()):
+            #  write functional groups for ring1
+            ci = ring.ring_cs[ci]
+            functional_group_atoms = []
+            connected_atom = False
+            for a in func_group:
+                if self.atoms[a].id not in self.GO_ids:
+                    if self.atoms[a].id in ci.connections:
+                        connected_atom = self.atoms[a]
+                    else:
+                        functional_group_atoms.append(self.atoms[a])
+
+            if connected_atom is not False:
+                if len(func_group) > 2:
+                    self.branches_to_write_after_root.append(
+                        self.branch_str.format(
+                            ci.id,
+                            connected_atom.id)
+                    )
+                    self.branches_to_write_after_root.append(connected_atom)
+                    self.branch_count += 1
+                else:
+                    for a in func_group:
+                        self.tmp.write(self.get_pdbqt_line(self.atoms[a]))
+
+            if len(func_group) > 2:
+                for a in functional_group_atoms:
+                    self.branches_to_write_after_root.append(a)
+
+            if connected_atom is not False:
+                if len(func_group) > 2:
+                    self.branches_to_write_after_root.append(
+                        self.end_branch_str.format(
+                            ci.id,
+                            connected_atom.id)
+                    )
+
+        #  write end of ring1
+        if link_index == 0:
+            self.tmp.write("ENDROOT\n")
+        #  write branches after root
+        for line in self.branches_to_write_after_root:
+            if isinstance(line, str):
+                self.tmp.write(line)
+            else:
+                self.tmp.write(self.get_pdbqt_line(line))
+
+        #  append end branch to list if not in the first linkage
+        if link_index != 0:
+            l = self.carbohydrate.ordered_linkages[link_index - 1]
+            self.end_branches.append(self.end_branch_str.format(
+                l.GO.id,
+                l.CX.id))
+
+        #  increment resnum
+        self.resnum += 1
+        #  write the branches
+        self.tmp.write("BRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
+        self.tmp.write(self.get_pdbqt_line(linkage.GO))
+        self.branch_count += 1
+        self.end_branches.append("ENDBRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
+
+
     def save_rigid(self, path=None):
         if path:
-            self.Carbohydrate.filepath = path + "/" + self.Carbohydrate.filename
-            print(self.Carbohydrate.filepath)
+            self.carbohydrate.filepath = path + "/" + self.carbohydrate.filename
+            print(self.carbohydrate.filepath)
 
-        tmp = open("./tmp.pdb", "w")
-
+        tmp = open("tmp.pdb", "w")
         GO_ids = []
-
         end_branches = []
 
+        #  write header
         tmp.write("ROOT\n")
-
-        for index in range(len(self.Carbohydrate.ordered_linkages)):
-
-            linkage = self.Carbohydrate.ordered_linkages[index]
-
+        #  loop through linkages
+        for index in range(len(self.carbohydrate.ordered_linkages)):
+            linkage = self.carbohydrate.ordered_linkages[index]
+            #  keep track of glycosidic oxygen ids
             GO_ids.append(linkage.GO.id)
-
-            if index == 0:
-                pass
-            else:
-                l = self.Carbohydrate.ordered_linkages[index - 1]
+            if index != 0:
+                link = self.carbohydrate.ordered_linkages[index - 1]
 
             #  write ring atoms for ring1
             for atom in linkage.ring1.ring:
                 tmp.write(self.get_pdbqt_line(self.atoms[atom]))
 
             #  write functional groups for ring1
-
             for a in linkage.ring1.c1_functional_group:
                 if self.atoms[a].id not in GO_ids:
                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
             for a in linkage.ring1.c2_functional_group:
                 if self.atoms[a].id not in GO_ids:
                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
             for a in linkage.ring1.c3_functional_group:
                 if self.atoms[a].id not in GO_ids:
                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
             for a in linkage.ring1.c4_functional_group:
                 if self.atoms[a].id not in GO_ids:
                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
             for a in linkage.ring1.c5_functional_group:
                 if self.atoms[a].id not in GO_ids:
                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
             #  end writing functional groups for ring1
 
             if index == 0:
                 pass
             else:
-                l = self.Carbohydrate.ordered_linkages[index - 1]
+                link = self.carbohydrate.ordered_linkages[index - 1]
 
             self.resnum += 1
 
             tmp.write(self.get_pdbqt_line(linkage.GO))
 
-            if index == len(self.Carbohydrate.ordered_linkages) - 1:
-
+            if index == len(self.carbohydrate.ordered_linkages) - 1:
                 for atom in linkage.ring2.ring:
                     tmp.write(self.get_pdbqt_line(self.atoms[atom]))
 
@@ -105,11 +177,11 @@ class Carbohydrate_to_PDBQT(object):
 
         tmp.write("ENDROOT\n")
 
-        tmp.write("TORSDOF {}".format(2 * len(self.Carbohydrate.ordered_linkages)))
+        tmp.write("TORSDOF {}".format(2 * len(self.carbohydrate.ordered_linkages)))
         tmp.close()
 
-        tmp = open("./tmp.pdb", "r")
-        test = open(self.Carbohydrate.filepath + ".pdbqt", "w")
+        tmp = open("tmp.pdb", "r")
+        test = open(self.carbohydrate.filepath + ".pdbqt", "w")
 
         for line in tmp.readlines():
             if line.__contains__("BRANCH"):
@@ -119,481 +191,174 @@ class Carbohydrate_to_PDBQT(object):
             else:
                 test.write(line)
 
-    def save_flex(self, path=None):
+    def save_flex(self, path: str = None):
+        """ Save a flexible carbohydrate to a pdbqt file
 
+        :param path:
+        :return:
+        """
         if path:
-            self.Carbohydrate.filepath = os.path.join(path, self.Carbohydrate.filename)
-            print(self.Carbohydrate.filepath)
-
-        tmp = open("./tmp.pdb", "w")
-        GO_ids = []
-        end_branches = []
-
-        branch_count = 0
-
-        for index in range(len(self.Carbohydrate.ordered_linkages)):
-
-            linkage = self.Carbohydrate.ordered_linkages[index]
-
-            GO_ids.append(linkage.GO.id)
-
-            if index == 0:
-                tmp.write("ROOT\n")
-            else:
-                l = self.Carbohydrate.ordered_linkages[index - 1]
-                tmp.write("BRANCH {} {}\n".format(l.GO.id, l.CX.id))
-                branch_count += 1
-
-            #  write ring atoms for ring1
-            for atom in linkage.ring1.ring:
-                tmp.write(self.get_pdbqt_line(self.atoms[atom]))
-
-            branches_to_write_after_root = []
-
-            #  write functional groups for ring1
-
-            # functional group 1
-            functional_group_atoms = []
-            connected_atom = False
-            for a in linkage.ring1.c1_functional_group:
-                if self.atoms[a].id not in GO_ids:
-
-                    if self.atoms[a].id in linkage.ring1.c1.connections:
-                        connected_atom = self.atoms[a]
-                    else:
-                        functional_group_atoms.append(self.atoms[a])
-
-            if connected_atom:
-                if len(linkage.ring1.c1_functional_group) > 2:
-                    branches_to_write_after_root.append("BRANCH {} {}\n".format(linkage.ring1.c1.id, connected_atom.id))
-                    branches_to_write_after_root.append(connected_atom)
-                    branch_count += 1
-                else:
-                    for a in linkage.ring1.c1_functional_group:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            if len(linkage.ring1.c1_functional_group) > 2:
-                for a in functional_group_atoms:
-                    branches_to_write_after_root.append(a)
-
-            if connected_atom:
-                if len(linkage.ring1.c1_functional_group) > 2:
-                    branches_to_write_after_root.append(
-                        "ENDBRANCH {} {}\n".format(linkage.ring1.c1.id, connected_atom.id))
-
-            # functional group 2
-            functional_group_atoms = []
-            connected_atom = False
-            for a in linkage.ring1.c2_functional_group:
-                if self.atoms[a].id not in GO_ids:
-
-                    if self.atoms[a].id in linkage.ring1.c2.connections:
-                        connected_atom = self.atoms[a]
-                    else:
-                        functional_group_atoms.append(self.atoms[a])
-
-            if connected_atom:
-                if len(linkage.ring1.c2_functional_group) > 2:
-                    branches_to_write_after_root.append("BRANCH {} {}\n".format(linkage.ring1.c2.id, connected_atom.id))
-                    branches_to_write_after_root.append(connected_atom)
-                    branch_count += 1
-                else:
-                    for a in linkage.ring1.c2_functional_group:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            if len(linkage.ring1.c2_functional_group) > 2:
-                for a in functional_group_atoms:
-                    branches_to_write_after_root.append(a)
-
-            if connected_atom:
-                if len(linkage.ring1.c2_functional_group) > 2:
-                    branches_to_write_after_root.append(
-                        "ENDBRANCH {} {}\n".format(linkage.ring1.c2.id, connected_atom.id))
-
-            # functional group 3
-            functional_group_atoms = []
-            connected_atom = False
-            for a in linkage.ring1.c3_functional_group:
-                if self.atoms[a].id not in GO_ids:
-
-                    if self.atoms[a].id in linkage.ring1.c3.connections:
-                        connected_atom = self.atoms[a]
-                    else:
-                        functional_group_atoms.append(self.atoms[a])
-
-            if connected_atom:
-                if len(linkage.ring1.c3_functional_group) > 2:
-                    branches_to_write_after_root.append("BRANCH {} {}\n".format(linkage.ring1.c3.id, connected_atom.id))
-                    branches_to_write_after_root.append(connected_atom)
-                    branch_count += 1
-                else:
-                    for a in linkage.ring1.c3_functional_group:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            if len(linkage.ring1.c3_functional_group) > 2:
-                for a in functional_group_atoms:
-                    branches_to_write_after_root.append(a)
-
-            if connected_atom:
-                if len(linkage.ring1.c3_functional_group) > 2:
-                    branches_to_write_after_root.append(
-                        "ENDBRANCH {} {}\n".format(linkage.ring1.c3.id, connected_atom.id))
-
-            # functional group 4
-            functional_group_atoms = []
-            connected_atom = False
-            for a in linkage.ring1.c4_functional_group:
-                if self.atoms[a].id not in GO_ids:
-
-                    if self.atoms[a].id in linkage.ring1.c4.connections:
-                        connected_atom = self.atoms[a]
-                    else:
-                        functional_group_atoms.append(self.atoms[a])
-
-            if connected_atom:
-                if len(linkage.ring1.c4_functional_group) > 2:
-                    branches_to_write_after_root.append("BRANCH {} {}\n".format(linkage.ring1.c4.id, connected_atom.id))
-                    branches_to_write_after_root.append(connected_atom)
-                    branch_count += 1
-                else:
-                    for a in linkage.ring1.c4_functional_group:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            if len(linkage.ring1.c4_functional_group) > 2:
-                for a in functional_group_atoms:
-                    branches_to_write_after_root.append(a)
-
-            if connected_atom:
-                if len(linkage.ring1.c4_functional_group) > 2:
-                    branches_to_write_after_root.append(
-                        "ENDBRANCH {} {}\n".format(linkage.ring1.c4.id, connected_atom.id))
-
-            # functional group 5
-            functional_group_atoms = []
-            connected_atom = False
-            for a in linkage.ring1.c5_functional_group:
-                if self.atoms[a].id not in GO_ids:
-
-                    if self.atoms[a].id in linkage.ring1.c5.connections:
-                        connected_atom = self.atoms[a]
-                    else:
-                        functional_group_atoms.append(self.atoms[a])
-
-            if connected_atom:
-                if len(linkage.ring1.c5_functional_group) > 2:
-                    branches_to_write_after_root.append("BRANCH {} {}\n".format(linkage.ring1.c5.id, connected_atom.id))
-                    branches_to_write_after_root.append(connected_atom)
-                    branch_count += 1
-                else:
-                    for a in linkage.ring1.c5_functional_group:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            if len(linkage.ring1.c5_functional_group) > 2:
-                for a in functional_group_atoms:
-                    branches_to_write_after_root.append(a)
-
-            if connected_atom:
-                if len(linkage.ring1.c5_functional_group) > 2:
-                    branches_to_write_after_root.append(
-                        "ENDBRANCH {} {}\n".format(linkage.ring1.c5.id, connected_atom.id))
-
-            #  end writing functional groups for ring1
-
-            if index == 0:
-                tmp.write("ENDROOT\n")
-
-            for line in branches_to_write_after_root:
-                if isinstance(line, str):
-                    tmp.write(line)
-                else:
-                    tmp.write(self.get_pdbqt_line(line))
-
-            if index > 0:
-                l = self.Carbohydrate.ordered_linkages[index - 1]
-                end_branches.append("ENDBRANCH {} {}\n".format(l.GO.id, l.CX.id))
-
-            self.resnum += 1
-
-            tmp.write("BRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
-            tmp.write(self.get_pdbqt_line(linkage.GO))
-            branch_count += 1
-            end_branches.append("ENDBRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
-
-
-
-            if index == len(self.Carbohydrate.ordered_linkages) - 1:
-                tmp.write("BRANCH {} {}\n".format(linkage.GO.id, linkage.CX.id))
-                branch_count += 1
-                end_branches.append("ENDBRANCH {} {}\n".format(linkage.GO.id, linkage.CX.id))
-
-                for atom in linkage.ring2.ring:
-                    tmp.write(self.get_pdbqt_line(self.atoms[atom]))
-
-                # functional group 1
-                functional_group_atoms = []
-                connected_atom = False
-                for a in linkage.ring2.c1_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-
-                        if self.atoms[a].id in linkage.ring2.c1.connections:
-                            connected_atom = self.atoms[a]
-                        else:
-                            functional_group_atoms.append(self.atoms[a])
-
-                if connected_atom:
-                    if len(linkage.ring2.c1_functional_group) > 2:
-                        tmp.write("BRANCH {} {}\n".format(linkage.ring2.c1.id, connected_atom.id))
-                        tmp.write(self.get_pdbqt_line(connected_atom))
-                        branch_count += 1
-                    else:
-                        for a in functional_group_atoms:
-                            tmp.write(self.get_pdbqt_line(a))
-
-                for a in functional_group_atoms:
-                    tmp.write(self.get_pdbqt_line(a))
-
-                if connected_atom:
-                    if len(linkage.ring2.c1_functional_group) > 2:
-                        tmp.write(
-                            "ENDBRANCH {} {}\n".format(linkage.ring2.c1.id, connected_atom.id))
-
-                # functional group 2
-                functional_group_atoms = []
-                connected_atom = False
-                for a in linkage.ring2.c2_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-
-                        if self.atoms[a].id in linkage.ring2.c2.connections:
-                            connected_atom = self.atoms[a]
-                        else:
-                            functional_group_atoms.append(self.atoms[a])
-
-                if connected_atom:
-                    if len(linkage.ring2.c2_functional_group) > 2:
-                        tmp.write("BRANCH {} {}\n".format(linkage.ring2.c2.id, connected_atom.id))
-                        tmp.write(self.get_pdbqt_line(connected_atom))
-                        branch_count += 1
-                    else:
-                        for a in functional_group_atoms:
-                            tmp.write(self.get_pdbqt_line(a))
-
-                for a in functional_group_atoms:
-                    tmp.write(self.get_pdbqt_line(a))
-
-                if connected_atom:
-                    if len(linkage.ring2.c2_functional_group) > 2:
-                        tmp.write(
-                            "ENDBRANCH {} {}\n".format(linkage.ring2.c2.id, connected_atom.id))
-
-                # functional group 3
-                functional_group_atoms = []
-                connected_atom = False
-                for a in linkage.ring2.c3_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-
-                        if self.atoms[a].id in linkage.ring2.c3.connections:
-                            connected_atom = self.atoms[a]
-                        else:
-                            functional_group_atoms.append(self.atoms[a])
-
-                if connected_atom:
-                    if len(linkage.ring2.c3_functional_group) > 2:
-                        tmp.write("BRANCH {} {}\n".format(linkage.ring2.c3.id, connected_atom.id))
-                        tmp.write(self.get_pdbqt_line(connected_atom))
-                        branch_count += 1
-                    else:
-                        for a in functional_group_atoms:
-                            tmp.write(self.get_pdbqt_line(a))
-
-                for a in functional_group_atoms:
-                    tmp.write(self.get_pdbqt_line(a))
-
-                if connected_atom:
-                    if len(linkage.ring2.c3_functional_group) > 2:
-                        tmp.write(
-                            "ENDBRANCH {} {}\n".format(linkage.ring2.c3.id, connected_atom.id))
-
-                # functional group 4
-                functional_group_atoms = []
-                connected_atom = False
-                for a in linkage.ring2.c4_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-
-                        if self.atoms[a].id in linkage.ring2.c4.connections:
-                            connected_atom = self.atoms[a]
-                        else:
-                            functional_group_atoms.append(self.atoms[a])
-
-                if connected_atom:
-                    if len(linkage.ring2.c4_functional_group) > 2:
-                        tmp.write("BRANCH {} {}\n".format(linkage.ring2.c4.id, connected_atom.id))
-                        tmp.write(self.get_pdbqt_line(connected_atom))
-                        branch_count += 1
-                    else:
-                        for a in functional_group_atoms:
-                            tmp.write(self.get_pdbqt_line(a))
-
-                for a in functional_group_atoms:
-                    tmp.write(self.get_pdbqt_line(a))
-
-                if connected_atom:
-                    if len(linkage.ring2.c4_functional_group) > 2:
-                        tmp.write(
-                            "ENDBRANCH {} {}\n".format(linkage.ring2.c4.id, connected_atom.id))
-
-                # functional group 5
-                functional_group_atoms = []
-                connected_atom = False
-                for a in linkage.ring2.c5_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-
-                        if self.atoms[a].id in linkage.ring2.c5.connections:
-                            connected_atom = self.atoms[a]
-                        else:
-                            functional_group_atoms.append(self.atoms[a])
-
-                if connected_atom:
-                    if len(linkage.ring2.c5_functional_group) > 2:
-                        tmp.write("BRANCH {} {}\n".format(linkage.ring2.c5.id, connected_atom.id))
-                        tmp.write(self.get_pdbqt_line(connected_atom))
-                        branch_count += 1
-                    else:
-                        for a in functional_group_atoms:
-                            tmp.write(self.get_pdbqt_line(a))
-
-                for a in functional_group_atoms:
-                    tmp.write(self.get_pdbqt_line(a))
-
-                if connected_atom:
-                    if len(linkage.ring2.c5_functional_group) > 2:
-                        tmp.write(
-                            "ENDBRANCH {} {}\n".format(linkage.ring2.c5.id, connected_atom.id))
-
-
-        end_branches.reverse()
-        for line in end_branches:
-            tmp.write(line)
-        tmp.write("TORSDOF {}".format(branch_count))
-        tmp.close()
-
-        tmp = open("./tmp.pdb", "r")
-        test = open(self.Carbohydrate.filepath + ".pdbqt", "w")
-
+            self.carbohydrate.filepath \
+                = os.path.join(path, self.carbohydrate.filename)
+            print(self.carbohydrate.filepath)
+
+        self.tmp = open("tmp.pdb", "w")
+        #  glycosidic oxygen ids (i.e. the main branch points)
+
+        # write root
+        self.tmp.write("ROOT\n")
+
+        #  loop through the linkages in order
+        for link_index, linkage in enumerate(
+                self.carbohydrate.ordered_linkages):
+            # keep track of glycosidic oxygen ids
+            self.GO_ids.append(linkage.GO.id)
+            #  process ring1
+            self.process_ring(linkage.ring1, link_index)
+
+            if link_index != 0:
+                l = self.carbohydrate.ordered_linkages[link_index - 1]
+                self.tmp.write(self.branch_str.format(l.GO.id, l.CX.id))
+                self.branch_count += 1
+
+            #  if not in the last linkage
+            if link_index == len(self.carbohydrate.ordered_linkages) - 1:
+                self.tmp.write("BRANCH {} {}\n".
+                               format(linkage.GO.id,
+                                      linkage.CX.id))
+                self.branch_count += 1
+                self.end_branches.append("ENDBRANCH {} {}\n".
+                                         format(linkage.GO.id,
+                                                linkage.CX.id))
+                #  process ring2
+                self.process_ring(linkage.ring2, link_index)
+
+        self.end_branches.reverse()
+        for line in self.end_branches:
+            self.tmp.write(line)
+        self.tmp.write("TORSDOF {}".format(self.branch_count))
+        self.tmp.close()
+
+        #  open the temporary file and write the pdbqt file
+        tmp = open("tmp.pdb", "r")
+        print(self.carbohydrate.filepath + ".pdbqt")
+        test = open(self.carbohydrate.filepath + ".pdbqt", "w")
         for line in tmp.readlines():
             if line.__contains__("BRANCH"):
                 branch_list = line.split()
-                test.write(branch_list[0] + " {} {}\n".format(self.atom_id_to_c[int(branch_list[1])],
-                                                              self.atom_id_to_c[int(branch_list[2])]))
+                test.write(branch_list[0]
+                           + " {} {}\n".format(
+                    self.atom_id_to_c[int(branch_list[1])],
+                    self.atom_id_to_c[int(branch_list[2])]
+                )
+                           )
             else:
                 test.write(line)
 
-    def save(self, path=None):
-
-        if path:
-            self.Carbohydrate.filepath = path + "/" + self.Carbohydrate.filename
-            print(self.Carbohydrate.filepath)
-
-        tmp = open("./tmp.pdb", "w")
-
-        GO_ids = []
-
-        end_branches = []
-
-        for index in range(len(self.Carbohydrate.ordered_linkages)):
-
-            linkage = self.Carbohydrate.ordered_linkages[index]
-
-            GO_ids.append(linkage.GO.id)
-
-            if index == 0:
-                tmp.write("ROOT\n")
-            else:
-                l = self.Carbohydrate.ordered_linkages[index - 1]
-                tmp.write("BRANCH {} {}\n".format(l.GO.id, l.CX.id))
-
-            #  write ring atoms for ring1
-            for atom in linkage.ring1.ring:
-                tmp.write(self.get_pdbqt_line(self.atoms[atom]))
-
-            #  write functional groups for ring1
-
-            for a in linkage.ring1.c1_functional_group:
-                if self.atoms[a].id not in GO_ids:
-                    tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            for a in linkage.ring1.c2_functional_group:
-                if self.atoms[a].id not in GO_ids:
-                    tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            for a in linkage.ring1.c3_functional_group:
-                if self.atoms[a].id not in GO_ids:
-                    tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            for a in linkage.ring1.c4_functional_group:
-                if self.atoms[a].id not in GO_ids:
-                    tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            for a in linkage.ring1.c5_functional_group:
-                if self.atoms[a].id not in GO_ids:
-                    tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-            #  end writing functional groups for ring1
-
-            if index == 0:
-                tmp.write("ENDROOT\n")
-            else:
-                l = self.Carbohydrate.ordered_linkages[index - 1]
-                end_branches.append("ENDBRANCH {} {}\n".format(l.GO.id, l.CX.id))
-
-            self.resnum += 1
-
-            tmp.write("BRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
-            tmp.write(self.get_pdbqt_line(linkage.GO))
-            end_branches.append("ENDBRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
-
-            if index == len(self.Carbohydrate.ordered_linkages) - 1:
-                tmp.write("BRANCH {} {}\n".format(linkage.GO.id, linkage.CX.id))
-                end_branches.append("ENDBRANCH {} {}\n".format(linkage.GO.id, linkage.CX.id))
-
-                for atom in linkage.ring2.ring:
-                    tmp.write(self.get_pdbqt_line(self.atoms[atom]))
-
-                for a in linkage.ring2.c1_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-                for a in linkage.ring2.c2_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-                for a in linkage.ring2.c3_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-                for a in linkage.ring2.c4_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-                for a in linkage.ring2.c5_functional_group:
-                    if self.atoms[a].id not in GO_ids:
-                        tmp.write(self.get_pdbqt_line(self.atoms[a]))
-
-        end_branches.reverse()
-        for line in end_branches:
-            tmp.write(line)
-        tmp.write("TORSDOF {}".format(2 * len(self.Carbohydrate.ordered_linkages)))
-        tmp.close()
-
-        tmp = open("./tmp.pdb", "r")
-        test = open(self.Carbohydrate.filepath + ".pdbqt", "w")
-
-        for line in tmp.readlines():
-            if line.__contains__("BRANCH"):
-                branch_list = line.split()
-                test.write(branch_list[0] + " {} {}\n".format(self.atom_id_to_c[int(branch_list[1])],
-                                                              self.atom_id_to_c[int(branch_list[2])]))
-            else:
-                test.write(line)
+    # def save(self, path=None):
+    #     if path:
+    #         self.carbohydrate.filepath \
+    #             = path + "/" + self.carbohydrate.filename
+    #         print(self.carbohydrate.filepath)
+    #
+    #     tmp = open("tmp.pdb", "w")
+    #     GO_ids = []
+    #     end_branches = []
+    #
+    #     for index in range(len(self.carbohydrate.ordered_linkages)):
+    #         linkage = self.carbohydrate.ordered_linkages[index]
+    #         GO_ids.append(linkage.GO.id)
+    #
+    #         if index == 0:
+    #             tmp.write("ROOT\n")
+    #         else:
+    #             l = self.carbohydrate.ordered_linkages[index - 1]
+    #             tmp.write("BRANCH {} {}\n".format(l.GO.id, l.CX.id))
+    #
+    #         #  write ring atoms for ring1
+    #         for atom in linkage.ring1.ring:
+    #             tmp.write(self.get_pdbqt_line(self.atoms[atom]))
+    #
+    #         #  write functional groups for ring1
+    #         for a in linkage.ring1.c1_functional_group:
+    #             if self.atoms[a].id not in GO_ids:
+    #                 tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #         for a in linkage.ring1.c2_functional_group:
+    #             if self.atoms[a].id not in GO_ids:
+    #                 tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #         for a in linkage.ring1.c3_functional_group:
+    #             if self.atoms[a].id not in GO_ids:
+    #                 tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #         for a in linkage.ring1.c4_functional_group:
+    #             if self.atoms[a].id not in GO_ids:
+    #                 tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #         for a in linkage.ring1.c5_functional_group:
+    #             if self.atoms[a].id not in GO_ids:
+    #                 tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #         #  end writing functional groups for ring1
+    #
+    #         if index == 0:
+    #             tmp.write("ENDROOT\n")
+    #         else:
+    #             l = self.carbohydrate.ordered_linkages[index - 1]
+    #             end_branches.append("ENDBRANCH {} {}\n".format(l.GO.id, l.CX.id))
+    #
+    #         self.resnum += 1
+    #
+    #         tmp.write("BRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
+    #         tmp.write(self.get_pdbqt_line(linkage.GO))
+    #         end_branches.append("ENDBRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
+    #
+    #         if index == len(self.carbohydrate.ordered_linkages) - 1:
+    #             tmp.write("BRANCH {} {}\n".format(linkage.GO.id, linkage.CX.id))
+    #             end_branches.append("ENDBRANCH {} {}\n".format(linkage.GO.id, linkage.CX.id))
+    #
+    #             for atom in linkage.ring2.ring:
+    #                 tmp.write(self.get_pdbqt_line(self.atoms[atom]))
+    #
+    #             for a in linkage.ring2.c1_functional_group:
+    #                 if self.atoms[a].id not in GO_ids:
+    #                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #             for a in linkage.ring2.c2_functional_group:
+    #                 if self.atoms[a].id not in GO_ids:
+    #                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #             for a in linkage.ring2.c3_functional_group:
+    #                 if self.atoms[a].id not in GO_ids:
+    #                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #             for a in linkage.ring2.c4_functional_group:
+    #                 if self.atoms[a].id not in GO_ids:
+    #                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #             for a in linkage.ring2.c5_functional_group:
+    #                 if self.atoms[a].id not in GO_ids:
+    #                     tmp.write(self.get_pdbqt_line(self.atoms[a]))
+    #
+    #     end_branches.reverse()
+    #     for line in end_branches:
+    #         tmp.write(line)
+    #     tmp.write("TORSDOF {}".format(2 * len(self.carbohydrate.ordered_linkages)))
+    #     tmp.close()
+    #
+    #     tmp = open("tmp.pdb", "r")
+    #     print(self.carbohydrate.filepath + ".pdbqt")
+    #     test = open(self.carbohydrate.filepath + ".pdbqt", "w")
+    #
+    #     for line in tmp.readlines():
+    #         if line.__contains__("BRANCH"):
+    #             branch_list = line.split()
+    #             test.write(branch_list[0]
+    #                        + " {} {}\n".format(
+    #                 self.atom_id_to_c[int(branch_list[1])],
+    #                 self.atom_id_to_c[int(branch_list[2])]))
+    #         else:
+    #             test.write(line)
 
     def get_pdbqt_line(self, atom):
         id = self.pad_before(self.c, 7)
@@ -602,7 +367,6 @@ class Carbohydrate_to_PDBQT(object):
         name = self.pad_before(atom.atom_type, 4) + " "
         ligand_type = self.pad_before(atom.ligand_type, 4)
         chain = self.pad_before(atom.chain, 2)
-        # res_id = self.pad_before(atom.ligandID, 4)
         res_id = self.pad_before(self.resnum, 4)
         x = "{:7.3f}".format(atom.x)
         x = self.pad_before(x, 12)
@@ -641,7 +405,6 @@ class Carbohydrate_to_PDBQT(object):
         # if self.is_Nsulfate(atom):
         #     name = self.pad_before("@NS", 4) + " "
 
-
         line = "ATOM{}{}{}{}{}{} {} {}  0.00  0.00     0.000 {}\n".format(id, name, ligand_type, chain, res_id,
                                                                           x, y, z, ADT)
         if add_H:
@@ -659,7 +422,6 @@ class Carbohydrate_to_PDBQT(object):
         return line
 
     def is_carboxylate(self, atom):
-
         neighbour = self.atoms[atom.id].connections[0]
         neighbour_connections = self.atoms[neighbour].connections
         count = 0
@@ -683,7 +445,6 @@ class Carbohydrate_to_PDBQT(object):
 
     def is_sulfate(self, atom):
         if atom.atom_type == "S":
-
             neighbour_connections = atom.connections
             count = 0
             for id in neighbour_connections:
@@ -715,18 +476,15 @@ class Carbohydrate_to_PDBQT(object):
             connections_xyz.append(xyz)
 
         if len(connections_xyz) != 3:
-
             return False
 
         atom_xyz = atom.getXYZ()
-
-        angle_1 = angle_between(connections_xyz[0], atom_xyz, connections_xyz[1])
-        angle_2 = angle_between(connections_xyz[1], atom_xyz, connections_xyz[2])
-        angle_3 = angle_between(connections_xyz[2], atom_xyz, connections_xyz[0])
+        angle_1 = Angle.angle_between(connections_xyz[0], atom_xyz, connections_xyz[1])
+        angle_2 = Angle.angle_between(connections_xyz[1], atom_xyz, connections_xyz[2])
+        angle_3 = Angle.angle_between(connections_xyz[2], atom_xyz, connections_xyz[0])
         sum_of_angles = abs(angle_1) + abs(angle_2) + abs(angle_3)
 
         return abs(360 - sum_of_angles) < 5
-
 
     def is_next_to_trigonal_planar_carbon(self, atom):
         neighbour = atom.connections[0]
@@ -741,9 +499,9 @@ class Carbohydrate_to_PDBQT(object):
         if len(connections_xyz) < 3:
             return False
 
-        angle_1 = angle_between(connections_xyz[0], neighbour_xyz, connections_xyz[1])
-        angle_2 = angle_between(connections_xyz[1], neighbour_xyz, connections_xyz[2])
-        angle_3 = angle_between(connections_xyz[2], neighbour_xyz, connections_xyz[0])
+        angle_1 = Angle.angle_between(connections_xyz[0], neighbour_xyz, connections_xyz[1])
+        angle_2 = Angle.angle_between(connections_xyz[1], neighbour_xyz, connections_xyz[2])
+        angle_3 = Angle.angle_between(connections_xyz[2], neighbour_xyz, connections_xyz[0])
         sum_of_angles = abs(angle_1) + abs(angle_2) + abs(angle_3)
 
         return abs(360 - sum_of_angles) < 5
@@ -759,6 +517,7 @@ class Carbohydrate_to_PDBQT(object):
         while len(string) < pad:
             string = " " + string
         return string
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
