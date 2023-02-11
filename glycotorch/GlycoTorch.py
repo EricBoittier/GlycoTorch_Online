@@ -6,18 +6,28 @@ from flask import send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
+import sys
 
 import glycotorch.Docking_Analysis
 from glycotorch.Carbohydrate_to_PDBQT import Carbohydrate_to_PDBQT
 from glycotorch.Protein_PDB import Protein_PDB
 
-app = Flask(__name__)
-app.secret_key = "super secret key"
+template_dir = os.path.abspath('templates/')
+print(template_dir, file=sys.stderr)
+app = Flask(__name__, template_folder=template_dir)
 
 UPLOAD_FOLDER = '/tmp'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+DATA_FOLDER = '/data/ligands/pdb'
+app.config['DATA_FOLDER'] = DATA_FOLDER
+GLYCOSIDIC_FOLDER = '/notebooks/glycosidic'
+app.config['GLYCOSIDIC_FOLDER'] = GLYCOSIDIC_FOLDER
 app.config['DEBUG'] = True
 
+# app.secret_key = "super secret key"
+# UPLOAD_FOLDER = '/tmp'
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# app.config['DEBUG'] = True
 CORS(app)
 ALLOWED_EXTENSIONS = {'pdb', 'pdbqt'}
 
@@ -30,13 +40,9 @@ def allowed_file(filename: str):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    """Upload a file.
-
-    :return:
-    """
+    print(request.method, request.form, request.files, file=sys.stderr)
     #  check if the post request has the file part
     if request.method == 'POST':
-        # print(request.form.__dict__)
         if 'analyse_ligand' in request.form:
             # check if the post request has the file part
             if 'ligand_to_analyse' not in request.files:
