@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="icon" href="https://ericboittier.pythonanywhere.com/static/flavicon.png">
+
+<html lang="en">
+
+
+<style>
+
+
+    .boxed_blue {
+
+                margin-left: 30%;
+                margin-right: 30%;
+                border: 3px solid #00004d;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+
+
+
+
+table.blueTable {
+  border: 1px solid #1C6EA4;
+  background-color: #EEEEEE;
+  width: 50%;
+  text-align: center;
+  border-collapse: collapse;
+}
+table.blueTable td, table.blueTable th {
+  border: 1px solid #AAAAAA;
+  padding: 3px 2px;
+}
+table.blueTable tbody td {
+  font-size: 13px;
+}
+table.blueTable tr:nth-child(even) {
+  background: #D0E4F5;
+}
+
+
+</style>
+
+
+<head>
+
+    <head>
+
+        <title>GlycoTorch</title>
+
+    <center>
+
+    <table>
+        <tr>
+            <th> <a href="http://ericboittier.pythonanywhere.com/"> <img src="https://ericboittier.pythonanywhere.com/static/d7897ddc-7d66-46e0-8dc3-6f25e65ce681.png"> </a></th>
+            <th>Open source, scientific software for the analysis of <br> glycosaminoglycans (GAGs) and their complexes.</th>
+        </tr>
+
+    </table>
+    </center>
+
+
+</head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+<div class="boxed_blue">
+    <center>
+    <div id="viewport" style="width:500px; height:400px;"></div>
+    </center>
+</div>
+
+<center>
+
+    <p1>
+            &#160;
+        </p1>
+
+
+    <table class="blueTable">
+  <col width="10%">
+  <col width="80%">
+
+
+        <tbody>
+<tr>
+<td> <b> filename </b> </td>
+<td> {{ name }}  </td>
+</tr>
+<tr>
+<td> <b> structure </b> </td>
+<td> {{ ligand.getName() }} </td>
+</tr>
+</tbody>
+</table>
+
+        <p1>
+            &#160;
+        </p1>
+
+    <table class="blueTable">
+        <tbody>
+
+        <tr>
+
+            <th> <center> Name </center> </th>
+
+    {% for name_phi_psi in ligand.get_phi_and_psi() %}
+
+    <td> <center> {{ name_phi_psi.get_name() }} </center> </td>
+
+    {% endfor %}
+
+</tr>
+        <tr>
+
+            <th> <center> φ (phi) </center> </th>
+
+    {% for name_phi_psi in ligand.get_phi_and_psi() %}
+
+    <td> <center> {{ name_phi_psi.get_phi() }} </center> </td>
+
+    {% endfor %}
+
+        </tr>
+
+        <tr>
+
+            <th> <center> Ψ (psi) </center> </th>
+
+    {% for name_phi_psi in ligand.get_phi_and_psi() %}
+
+    <td> <center> {{ name_phi_psi.get_psi() }} </center> </td>
+
+    {% endfor %}
+
+
+</tr>
+
+</tbody>
+</table>
+
+
+
+
+</center>
+
+<script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
+<script>
+
+function defaultStructureRepresentation( component ){
+    // bail out if the component does not contain a structure
+    if( component.type !== "structure" ) return;
+    // add three representations
+    component.addRepresentation( "cartoon", {
+        aspectRatio: 3.0,
+        scale: 1.5
+    } );
+    component.addRepresentation( "licorice", {
+        sele: "hetero and not ( water or ion )",
+        multipleBond: true
+    } );
+    component.addRepresentation( "spacefill", {
+        sele: "water or ion",
+        scale: 0.5
+    } );
+}
+
+function distanceSelection ( o ){
+    // get all atoms within 5 Angstrom of selection
+    var selection = new NGL.Selection( "saccharide" );
+    var radius = 6;
+    var atomSet = o.structure.getAtomSetWithinSelection( selection, radius );
+    // expand selection to complete groups
+    var atomSet2 = o.structure.getAtomSetWithinGroup( atomSet );
+    o.addRepresentation( "licorice", { sele: atomSet2.toSeleString() } );
+    // o.addRepresentation( "cartoon" );
+    o.autoView();}
+
+{% if name %}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
+stage.loadFile( "/data/ligands/pdb/{{ name }}" , {defaultRepresentation: true}).then( distanceSelection );});
+stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+
+{% endif %}
+</script>
+
+
+<div>
+    <a href="https://plot.ly/~4boitter/6/?share_key=NSpvRiG9737ejHoLTR29y2" target="_blank" title="basic-scatter.html" style="display: block; text-align: center;"><img src="https://plot.ly/~4boitter/6.png?share_key=NSpvRiG9737ejHoLTR29y2" alt="basic-scatter.html" style="max-width: 50%;width: 50%;"  width="50%" onerror="this.onerror=null;this.src='https://plot.ly/404.png';" /></a>
+    <script data-plotly="4boitter:6" sharekey-plotly="NSpvRiG9737ejHoLTR29y2" src="https://plot.ly/embed.js" async></script>
+</div>
+
+</body>
+</html>
+

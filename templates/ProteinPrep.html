@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="icon" href="https://ericboittier.pythonanywhere.com/static/flavicon.png">
+
+<html lang="en">
+
+
+<style>
+
+
+.boxed_blue {
+
+    margin-left: 30%;
+    margin-right: 30%;
+    border: 3px solid #00004d;
+    border-width: 10px;
+    padding: 25px;
+    border-radius: 25px;
+}
+
+</style>
+
+
+<head>
+
+{% include 'header.html' %}
+
+    </head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+
+    <div class="boxed_blue">
+        <center>
+            <div id="viewport" style="width:500px; height:500px;"></div>
+        </center>
+    </div>
+
+
+    <p1>
+        &#160;
+    </p1>
+
+    <center>
+
+
+    <form method="POST" >
+    <input type="submit" name="download" value="Generate Protein PDBQT file">
+    </form>
+
+     </center>
+
+    <script src="https://ericboittier.pythonanywhere.com/static/ngl.js"></script>
+    <script src="https://ericboittier.pythonanywhere.com/static/three.js"></script>
+    <script>
+
+    {% if name %}
+
+    var components = [];
+
+    var stage = new NGL.Stage("viewport", {backgroundColor:'white', sampleLevel: 5});
+    var color = new THREE.Color( 0x00ff00 );
+    var topPosition = 40
+    var center_x = -23 ;
+    var center_y = 54 ;
+    var center_z = 13 ;
+    var size_x = 20 ;
+    var size_y = 20 ;
+    var size_z = 20 ;
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        stage.loadFile("https://ericboittier.pythonanywhere.com/tmp/{{ name }}", {defaultRepresentation: true}).then( distanceSelection );});
+        
+        // stage.mouseControls.add("drag-left+right", NGL.MouseActions.movePick);
+
+
+        makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+
+
+
+function defaultStructureRepresentation( component ){
+    // bail out if the component does not contain a structure
+    if( component.type !== "structure" ) return;
+    // add three representations
+    component.addRepresentation( "cartoon", {
+        aspectRatio: 3.0,
+        scale: 1.5
+    } );
+    component.addRepresentation( "licorice", {
+        sele: "hetero and not ( water or ion )",
+        multipleBond: true
+    } );
+    component.addRepresentation( "spacefill", {
+        sele: "water or ion",
+        scale: 0.5
+    } );
+    }
+
+function distanceSelection ( o ){
+    // get all atoms within 5 Angstrom of selection
+    var selection = new NGL.Selection( "saccharide" );
+    var radius = 6;
+    var atomSet = o.structure.getAtomSetWithinSelection( selection, radius );
+    // expand selection to complete groups
+    var atomSet2 = o.structure.getAtomSetWithinGroup( atomSet );
+    o.addRepresentation( "licorice", { sele: atomSet2.toSeleString() } );
+    // o.addRepresentation( "cartoon" );
+    o.autoView();}
+
+    // First, checks if it isn't implemented yet.
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) {
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}
+
+
+function AddBox(position, height) {
+  var shape = new NGL.Shape("shape");
+  var boxBuffer = new NGL.BoxBuffer({
+   position: new Float32Array([ 25.518, 64.421, 55.616 ]),
+   color: new Float32Array([ 1, 0, 1 ]),
+   size: new Float32Array([ 6 ]),
+   heightAxis: new Float32Array([ 0, 6, 0 ]),
+   depthAxis: new Float32Array([ 0, 0, 6 ])
+  });
+  shape.addBuffer(boxBuffer)
+  var shapeComp = stage.addComponentFromObject(shape)
+  shapeComp.addRepresentation("buffer", {opacity: 0.5});
+}
+
+function makeBox(center_x, center_y, center_z, size_x, size_y, size_z) {
+
+  var shape = new NGL.Shape("shape");
+
+  var boxBuffer = new NGL.BoxBuffer({
+  position: new Float32Array([ center_x, center_y, center_z ]),
+  color: new Float32Array([ 1, 0, 1 ]),
+  size: new Float32Array([ size_x ]),
+  heightAxis: new Float32Array([ 0, size_y, 0 ]),
+  depthAxis: new Float32Array([ 0, size_z, 6 ])});
+
+  shape.addBuffer(boxBuffer)
+  var shapeComp = stage.addComponentFromObject(shape)
+  shapeComp.addRepresentation("buffer", {opacity: 0.5});
+  components.push(shapeComp);
+}
+
+
+function refresh(){
+  for (var i = 0; i < components.length; i++) {
+    stage.removeComponent(components[i]);
+  }
+  components = [];
+  }
+
+function addElement (el) {
+  Object.assign(el.style, {
+    position: "absolute",
+    zIndex: 10
+  })
+  stage.viewer.container.appendChild(el)
+}
+
+function createElement (name, properties, style) {
+  var el = document.createElement(name)
+  Object.assign(el, properties)
+  Object.assign(el.style, style)
+  return el
+}
+
+function createFileButton (label, properties, style) {
+  var input = createElement("input", Object.assign({
+    type: "None"
+  }, properties), { display: "none" })
+
+  addElement(input)
+
+  var button = createElement("input", {
+    value: label,
+    type: "button",
+    onclick: function () { input.click() }
+  }, style)
+
+  return button
+}
+
+
+
+function getTopPosition (increment) {
+  if (increment) topPosition += increment
+  return topPosition + "px"
+}
+
+
+addElement(createElement("span", {
+  width: "100px",
+  innerText: "Center x"
+}, { top: getTopPosition(20), left: "12px", color: "black" }))
+var center_x_range = createElement("input", {
+  type: "range", value: 0, min: -100, max: 100, step: 1
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
+
+center_x_range.oninput = function (e) {
+  center_x = parseFloat(e.target.value)
+  refresh();
+  makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+}
+
+addElement(center_x_range)
+
+
+
+addElement(createElement("span", {
+  innerText: "Size x",
+  width: "200px"
+}, { top: getTopPosition(20), left: "12px", color: "black" }))
+var size_x_range = createElement("input", {
+  type: "range", value: 10, min: 0, max: 100, step: 0.5
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
+
+
+size_x_range.oninput = function (e) {
+  size_x = parseFloat(e.target.value)
+  refresh();
+  makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+}
+addElement(size_x_range)
+
+
+addElement(createElement("span", {
+  innerText: "Center y"
+}, { top: getTopPosition(20), left: "12px", color: "black" }))
+var center_y_range = createElement("input", {
+  type: "range", value: 0, min: -100, max: 100, step: 1
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
+center_y_range.oninput = function (e) {
+  center_y = parseFloat(e.target.value)
+  refresh();
+  makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+}
+addElement(center_y_range)
+
+addElement(createElement("span", {
+  innerText: "Size y"
+}, { top: getTopPosition(20), left: "12px", color: "black" }))
+var size_y_range = createElement("input", {
+  type: "range", value: 10, min: 0, max: 100, step: 0.5
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
+size_y_range.oninput = function (e) {
+  size_y = parseFloat(e.target.value)
+  refresh();
+  makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+}
+addElement(size_y_range)
+
+
+addElement(createElement("span", {
+  innerText: "Center z"
+}, { top: getTopPosition(20), left: "12px", color: "black" }))
+var center_z_range = createElement("input", {
+  type: "range", value: 0, min: -100, max: 100, step: 1
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
+center_z_range.oninput = function (e) {
+  refresh();
+  center_z = parseFloat(e.target.value)
+  makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+};
+addElement(center_z_range);
+
+addElement(createElement("span", {
+  innerText: "Size z"
+}, { top: getTopPosition(20), left: "12px", color: "black" }))
+var size_z_range = createElement("input", {
+  type: "range", value: 10, min: 0, max: 100, step: 0.5
+}, { top: getTopPosition(16), left: "12px", width: "200px" })
+
+size_z_range.oninput = function (e) {
+  size_z = parseFloat(e.target.value)
+  refresh();
+  makeBox(center_x, center_y, center_z, size_x, size_y, size_z);
+};
+addElement(size_z_range);
+
+
+var saveConfigButton = createFileButton("Save config file", {
+    onclick: function (e) {
+
+      var ConfigFileToSave = 'center_x = {0}\ncenter_y = {1}\ncenter_z = {2}\nsize_x = {3}\nsize_y = {4}\nsize_z = {4}\nenergy_range = 12\nexhaustiveness = 12\nnum_modes = 100'.format(center_x, center_y, center_z, size_x, size_y, size_z)
+
+      var hiddenElement = document.createElement('a');
+
+      hiddenElement.href = 'data:attachment/text,' + encodeURI(ConfigFileToSave);
+      hiddenElement.target = '_blank';
+      hiddenElement.download = 'config.conf';
+      hiddenElement.click();
+
+
+
+      console.log(center_x, center_y, center_z)
+    // if (e.target.files[ 0 ]) {
+    //   testSelect.value = ""
+    //   testInfo.innerText = ""
+    //   loadStructure(e.target.files[ 0 ])
+    // }
+  }
+}, { top: getTopPosition(40), left: "24px" })
+
+addElement(saveConfigButton)
+
+
+
+{% endif %}
+
+</script>
+
+<p1>
+    &#160;
+</p1>
+
+
+{% include 'footer.html' %}
+
+</body>
+</html>
+

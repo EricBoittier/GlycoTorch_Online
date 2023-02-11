@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+{% include 'header.html' %}
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Tutorials</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/app/templatesates/css/normalize.css">
+  <link rel="stylesheet" href="/app/templatesates/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="https://ericboittier.pythonanywhere.com/static/glycotorch.png">
+
+<html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="icon" href="https://ericboittier.pythonanywhere.com/static/glycotorch.svg">
+
+<style>
+
+
+    .boxed_blue {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                border: 3px solid #00004d;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .boxed_gold {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                border: 3px solid #e0c56e;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .boxed_green {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                border: 3px solid #00802b;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .boxed_red {
+
+                margin-left: 20%;
+                margin-right: 20%;
+                border: 3px solid #cc0000;
+                border-width: 10px;
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .grey {
+                margin-left: 20%;
+                margin-right: 20%;
+                background-color: #D3D3D3;
+                /*border: 3px solid #cc0000;
+                border-width: 10px;*/
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    .gold {
+                margin-left: 20%;
+                margin-right: 20%;
+                background-color: #e0c56e;
+                /*border: 3px solid #cc0000;
+                border-width: 10px;*/
+                padding: 25px;
+                border-radius: 25px;
+    }
+
+    img.one {
+  height: 50%;
+  width: 50%;
+}
+
+<!--#foo table {-->
+<!--  border-collapse:collapse;-->
+<!--  border:0px;-->
+<!--  width:100%;-->
+<!--  rules:none;-->
+<!--}-->
+
+</style>
+
+
+
+
+
+<body>
+
+<center>
+
+    <h1> <u> Tutorials </u></h1>
+
+<div class="boxed_gold">
+
+    <h2> Docking with GlycoTorch Vina</h2>
+
+    <h3> Overview </h3>
+
+    <table>
+
+    <tr>
+        <td>
+            <p> This tutorial will cover preparing input files for GlycoTorch, as well as running and analysing docking results. </p>
+
+            <p> Users will need to download UCSF Chimera (or equivalent software) to add hydrogen atoms to a protein crystal structure.
+        (<a href="cgl.ucsf.edu/chimera/download.html">download here</a>) </p>
+
+            <p> After such software is installed, the general outline of the tutorial is as follows: </p>
+
+                <ol>
+        <li> Add hydrogen atoms to the protein and extract co-crystallised ligand (e.g. in UCSF chimera). </li>
+        <li> Prepare the GAG ligand for docking (on the GlycoTorch website). </li>
+        <li> Prepare the protein for docking and select a binding site (on the GlycoTorch website). </li>
+        <li> Run docking (on your local machine).</li>
+        <li> View the results (e.g. in UCSF chimera). </li>
+             </ol>
+        </td>
+    </tr>
+
+    </table>
+
+    <h3> 1.0  - Prepare the protein </h3>
+
+    <table>
+    <tr>
+        <td>
+            <p> For this tutorial, we will be using the crystal structure of heparin with a fibroblast growth factor (PDB code: 2AXM),
+                available for download from the RCSB PDB (<a href="https://www.rcsb.org/structure/2axm">here</a>).</p>
+
+            <p> Once downloaded, open the structure using Chimera. Add hydrogen atoms by clicking on "Tools → Structure Editing → AddH"</p>
+
+            <p> To save the file, click on "File → Save PDB..." and save the file as 2axm_Hs.pdb.</p>
+
+            <p> We also want to save a file containing only the ligand. To do this, click "Select → Structure → ligand"
+                and again click on "File → Save PDB...". This time, check the box that says "Save selected atoms only"
+                and save the file as 2axm_ligand.pdb.</p>
+
+        </td>
+    </tr>
+    </table>
+
+    
+
+    
+    <h3> 2.0 - Prepare the ligand </h3>
+    <img class="one" src="https://ericboittier.pythonanywhere.com/static/tutorial_step2.PNG">
+
+    <table>
+    <tr>
+        <td>
+            <p> On the GlycoTorch website, navigate to "Tools → GAG ligand input file preparation". </p>
+
+            <p> Click "Choose File", and upload the PDB file of the ligand (2axm_ligand.pdb), then hit "Submit".  </p>
+
+            <p> Click "Generate GlycoTorch Vina Input" to download the file. In this step, appropriate atom types are
+                added to the ligand to be compatible with the extra parameters in GlycoTorch Vina.</p>
+
+            <p> (Optional) Angles of the glycosidic torsions (φ and ψ) and Cremer-Pople parameters describing ring conformations are printed here.
+                These can be compared to the expected literature values.</p>
+
+        </td>
+    </tr>
+    </table>
+
+
+
+    <h3> 3.0 - Generate files to set the search space </h3>
+    <img class="one" src="https://ericboittier.pythonanywhere.com/static/tutorial_step3.PNG">
+    <table>
+    <tr>
+        <td>
+            <p> On the GlycoTorch website, navigate to "Tools → Protein input file preparation". </p>
+
+            <p> Click "Choose File", and upload the PDB file of the original protein with added hydrogen atoms (2axm_Hs.pdb), then hit "Submit".  </p>
+
+            <p> Using the sliders on the top, left-hand side of the page, adjust the size and position of the purple box
+                to set the search space to explore when docking. This should include all amino acid side chains in the binding site.</p>
+
+            <p> Click "Save Config File" and download the file that sets the parameters for docking.
+                Default parameters are given here and can be changed by the user as necessary. </p>
+
+            <p> Click "Generate Protein PDBQT File" and download the structure of the receptor with appropriate atom types for GlycoTorch Vina. </p>
+
+        </td>
+    </tr>
+    </table>
+
+    <h3> 4.0 - Docking with GlycoTorch Vina </h3>
+    <table>
+    <tr>
+        <td>
+            <p> Download the executable for GlycoTorch Vina (<a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Windows</a>,
+    <a href="https://ericboittier.pythonanywhere.com/static/GlycoTorchVina.exe">Linux</a>) and save it in a folder with the other files generated in previous steps.</p>
+
+            <p> In this example, the parameters for the CHI coefficient and cutoff should be set to 2 and 1 respectively.
+            These values are good for large GAG ligands (tetrasaccharides or longer) because
+                it restricts them from exploring some higher energy conformations that would only be accessible for smaller sugars.
+                For smaller sugars, CHI coefficient and cutoff values are recommended to be set to 1 and 0, respectively.
+            </p>
+
+            <p1>
+            &#160;
+        </p1>
+
+            <center> <b> Windows </b> </center>
+            <p> Open the command prompt app from the start menu.</p>
+            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> (e.g.) cd C:\Users\USERNAME\Desktop\Tutorial </pre>
+            <p> To run docking: </p>
+            <pre> GlycoTorchVina.exe --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf --chi_coeff 2 --chi_cutoff 1</pre>
+
+            <p1>
+            &#160;
+        </p1>
+
+
+            <center> <b> Linux </b> </center>
+            <p> Open the terminal app.</p>
+            <p> Use the cd command to change directories to folder containing your files.</p>
+            <pre> (e.g.) cd /home/USERNAME/Desktop/Tutorial </pre>
+            <p> To run docking: </p>
+            <pre> GlycoTorchVina --receptor 2axm_Hs.pdbqt --ligand 2axm_ligand.pdbqt --config config.conf --chi_coeff 2 --chi_cutoff 1 </pre>
+
+
+        </td>
+    </tr>
+    </table>
+
+
+
+</div>
+
+</center>
+
+{% include 'footer.html' %}
+
+</body>
+
+
+</html>
+
+
+

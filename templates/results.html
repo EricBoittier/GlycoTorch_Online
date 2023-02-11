@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+</head>
+<body>
+
+{% for pdf in pdfs %}
+
+<img src="http://ericboittier.pythonanywhere.com/notebooks/{{ type }}/{{ pdf }}" >
+
+{% endfor %}
+
+</body>
+</html>

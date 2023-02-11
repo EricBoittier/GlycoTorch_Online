@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results Index</title>
+</head>
+<body>
+
+{% for l in list %}
+<p> {{ l }} </p>
+{% for a in ["0_0", "1_0", "1_1", "1_2", "2_0", "2_1", "2_2", "3_0", "3_1", "3_2"] %}
+<p> <a href="http://ericboittier.pythonanywhere.com/vinacarbresult/{{ a }}/small/{{ l }}"> {{ l }} {{ a }} </a>  </p>
+
+<img src="https://ericboittier.pythonanywhere.com/data/results/glycosidic/{{ a }}/small/{{ l }}/{{ l.replace("_", " ") }}.pdb.mol2.pdbqt_barchart_.png"  height="300" width="330">
+
+<p> </p>
+{% endfor %}
+{% endfor %}
+
+
+
+</body>
+</html>
