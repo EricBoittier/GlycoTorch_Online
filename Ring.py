@@ -6,7 +6,6 @@ from Get_IUPAC_Ring_Conformation import *
 class Ring(object):
     """
     A class to handle ring operations
-
     """
 
     def __init__(self, c1, c2, c3, c4, c5, o5, atoms):
@@ -22,7 +21,7 @@ class Ring(object):
         self.o5 = o5
 
         self.ring = [c1.id, c2.id, c3.id, c4.id, c5.id, o5.id]
-
+        self.ring_cs = [self.c1, self.c2, self.c3, self.c4, self.c5]
         self.ring_hash = self.get_ring_hash()
 
         self.c1_xyz = c1.getXYZ()
@@ -50,7 +49,7 @@ class Ring(object):
         self.c1_functional_group = self.c2_functional_group = \
             self.c3_functional_group = self.c4_functional_group = self.c5_functional_group = []
 
-    def get_functional_groups(self, glycosidic_atoms):
+    def set_functional_groups(self, glycosidic_atoms):
         self.c1_functional_group = self.get_functional_group(self.c1, glycosidic_atoms)
         self.c2_functional_group = self.get_functional_group(self.c2, glycosidic_atoms)
         self.c3_functional_group = self.get_functional_group(self.c3, glycosidic_atoms)
@@ -58,34 +57,36 @@ class Ring(object):
         self.c5_functional_group = self.get_functional_group(self.c5, glycosidic_atoms)
 
         # print(self.c2_functional_group)
-
+    def get_functional_groups(self) -> (list, list, list, list, list):
+        return self.c1_functional_group, self.c2_functional_group, self.c3_functional_group, \
+               self.c4_functional_group, self.c5_functional_group
 
     def get_functional_group(self, atom, glycosidic_atoms):
         functional_group = []
-
         for x in atom.connections:
+            #  loop through the connections of the atom and
+            #  if it is not in the ring
+            #  and not in the glycosidic atoms, then it is
+            #  part of the functional group
             if x not in self.ring and x not in glycosidic_atoms:
                 functional_group.append(x)
-
-
-
+        #  now loop through the functional group and
+        #  find all the atoms that are connected
         if len(functional_group) > 0:
-
             visited, stack = set(), [functional_group[0]]
-
+            #  loop through the stack and add all the atoms
+            #  that are connected
             while stack:
                 vertex = stack.pop()
                 if vertex not in visited:
                     visited.add(vertex)
-
                     fg = set()
                     for x in self.atoms[vertex].connections:
-                        if x not in self.ring and x not in glycosidic_atoms and \
+                        if x not in self.ring \
+                                and x not in glycosidic_atoms and \
                                 self.atoms[x].ligandID == atom.ligandID:
                             fg.add(x)
-
                     stack.extend(fg - visited)
-
             functional_group = visited
 
         return list(functional_group)
@@ -119,3 +120,10 @@ class Ring(object):
         print(self.c4.line)
         print(self.c5.line)
         print(self.o5.line)
+
+    def print_functional_groups(self):
+        print("C1 Functional Group: ", self.c1_functional_group)
+        print("C2 Functional Group: ", self.c2_functional_group)
+        print("C3 Functional Group: ", self.c3_functional_group)
+        print("C4 Functional Group: ", self.c4_functional_group)
+        print("C5 Functional Group: ", self.c5_functional_group)
