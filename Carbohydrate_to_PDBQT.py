@@ -525,9 +525,9 @@ class Carbohydrate_to_PDBQT(object):
             string = " " + string
         return string
 
-c = Carbohydrate("/Users/ericboittier/Downloads/Unsulphated_HS_tetramer_glycam.pdb")
-pdbqt = Carbohydrate_to_PDBQT(c)
-pdbqt.save_flex()
+# c = Carbohydrate("/Users/ericboittier/Downloads/Unsulphated_HS_tetramer_glycam.pdb")
+# pdbqt = Carbohydrate_to_PDBQT(c)
+# pdbqt.save_flex()
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
