@@ -18,16 +18,13 @@ class Carbohydrate_to_PDBQT(object):
         self.resnum = 1
         self.c = 1
         self.atom_id_to_c = {}
-
         self.functional_groups = []
         self.GO_ids = []
         self.branches = []
         self.branch_counts = []
         self.end_branches = []
         self.branches_to_write_after_root = []
-
         self.tmp = None
-
         self.branch_str = "BRANCH {} {}\n"
         self.end_branch_str = "ENDBRANCH {} {}\n"
 
@@ -45,44 +42,46 @@ class Carbohydrate_to_PDBQT(object):
         for atom in ring.ring_cs:
             self.tmp.write(self.get_pdbqt_line(self.atoms[atom.id]))
 
-        #  loop through functional_groups in ring1
+        #  loop through functional_groups in ring
         for ci, func_group in enumerate(ring.get_functional_groups()):
-            #  write functional groups for ring1
+            #  write functional groups for ring
             ci = ring.ring_cs[ci]
-            print("func group:", func_group)
             functional_group_atoms = []
-            connected_atom = False
+            connected_atom = None
             for a in func_group:
+                #  if not the glycosidic oxygen
                 if self.atoms[a].id not in self.GO_ids:
+                    #  found the connected atom
                     if self.atoms[a].id in ci.connections:
                         connected_atom = self.atoms[a]
                     else:
-                        functional_group_atoms.append(self.atoms[a])
-            print("fga:", functional_group_atoms)
-            if connected_atom is not False:
-                if len(functional_group_atoms) > 1:
-                    self.branches_to_write_after_root.append(
-                        self.branch_str.format(
-                            ci.id,
-                            connected_atom.id)
-                    )
-                    self.branches_to_write_after_root.append(connected_atom)
-                    self.branch_count += 1
-                else:
-                    for a in functional_group_atoms:
-                        self.tmp.write(self.get_pdbqt_line(a))
+                        if self.atoms[a].id not in functional_group_atoms:
+                            functional_group_atoms.append(self.atoms[a])
 
             if len(functional_group_atoms) > 2:
+                self.branches_to_write_after_root.append(
+                    self.branch_str.format(
+                        ci.id,
+                        connected_atom.id)
+                )
+                self.branches_to_write_after_root.\
+                    append(connected_atom)
+                self.branch_count += 1
+            else:
+                #  just a non-rotatable group, write to the root/branch
+                for a in functional_group_atoms:
+                    self.tmp.write(self.get_pdbqt_line(a))
+            #  write the functional group to the branch
+            if len(functional_group_atoms) > 3:
                 for a in functional_group_atoms:
                     self.branches_to_write_after_root.append(a)
-
-            if connected_atom is not False:
-                if len(func_group) > 2:
-                    self.branches_to_write_after_root.append(
-                        self.end_branch_str.format(
-                            ci.id,
-                            connected_atom.id)
-                    )
+            #  write the functional group to the root
+            if len(functional_group_atoms) > 3:
+                self.branches_to_write_after_root.append(
+                    self.end_branch_str.format(
+                        ci.id,
+                        connected_atom.id)
+                )
 
         #  write end of ring1
         if link_index == 0:
@@ -104,10 +103,13 @@ class Carbohydrate_to_PDBQT(object):
         #  increment resnum
         self.resnum += 1
         #  write the branches
-        self.tmp.write("BRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
+        self.tmp.write("BRANCH {} {}\n".format(
+            linkage.C1.id,
+            linkage.GO.id))
         self.tmp.write(self.get_pdbqt_line(linkage.GO))
         self.branch_count += 1
-        self.end_branches.append("ENDBRANCH {} {}\n".format(linkage.C1.id, linkage.GO.id))
+        self.end_branches.append("ENDBRANCH {} {}\n"
+                                 .format(linkage.C1.id, linkage.GO.id))
 
 
     def save_rigid(self, path=None):
@@ -261,6 +263,8 @@ class Carbohydrate_to_PDBQT(object):
                            )
             else:
                 test.write(line)
+
+        test.close()
 
     # def save(self, path=None):
     #     if path:

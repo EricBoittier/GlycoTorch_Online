@@ -47,6 +47,12 @@ class PDB(object):
     def add_edges(self, edges):
         self.graph.add_edges_from(edges)
 
+    def remove_node(self, node):
+        self.graph.remove_node(node)
+
+    def remove_edges(self, edges):
+        self.graph.remove_edges_from(edges)
+
     def toString(self):
         string = ""
         for line in self.lines:

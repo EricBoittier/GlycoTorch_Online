@@ -23,7 +23,8 @@ class Ring(object):
         self.o5 = o5
 
         self.ring = [c1.id, c2.id, c3.id, c4.id, c5.id, o5.id]
-        self.ring_cs = [self.c1, self.c2, self.c3, self.c4, self.c5]
+        self.ring_cs = [self.c1, self.c2, self.c3,
+                        self.c4, self.c5, self.o5]
         self.ring_hash = self.get_ring_hash()
 
         self.c1_xyz = c1.getXYZ()
@@ -72,7 +73,7 @@ class Ring(object):
             #  part of the functional group
             if x not in self.ring and \
                     x not in glycosidic_atoms\
-                    and not self.atoms[x].atom_type.__contains__("H"):
+                    and self.atoms[x].atom_type[0] != "H":
                 functional_group.append(x)
         #  now loop through the functional group and
         #  find all the atoms that are connected
@@ -87,8 +88,8 @@ class Ring(object):
                     fg = set()
                     for x in self.atoms[vertex].connections:
                         if x not in self.ring \
-                                and x not in glycosidic_atoms and \
-                                self.atoms[x].ligandID == atom.ligandID:
+                                and x not in glycosidic_atoms:# and \
+                                #self.atoms[x].ligandID == atom.ligandID:
                             fg.add(x)
                     stack.extend(fg - visited)
             functional_group = visited

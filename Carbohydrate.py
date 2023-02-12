@@ -25,11 +25,26 @@ class Carbohydrate(PDB):
                             self.get_atoms()[v].id)
                            for k, v in connections]
             for a, b in connections:
-                self.atoms[a].add_connection(b)
-                self.atoms[b].add_connection(a)
+                if self.valid_pdbqt(a, b):
+                    self.atoms[a].add_connection(b)
+                    self.atoms[b].add_connection(a)
+                else:
+                    if self.atoms[a].atomname == "H":
+                        for con in self.atoms[a].connections:
+                            self.atoms[con].remove_connection(a)
+                        del self.atoms[a]
+                        self.graph.remove_node(a)
+                    elif self.atoms[b].atomname == "H":
+                        for con in self.atoms[b].connections:
+                            self.atoms[con].remove_connection(b)
+                        del self.atoms[b]
+                        self.graph.remove_node(b)
 
             self.add_edges(connections)
             self.set_connections()
+
+            print(self.graph)
+
             self.find_rings()
 
         if len(self.rings) == 0:
@@ -47,6 +62,16 @@ class Carbohydrate(PDB):
         self.assign_glycosidic_atoms()
         self.make_sugar_graph()
         self.set_name()
+
+    def valid_pdbqt(self, a, b):
+        a = self.atoms[a]
+        b = self.atoms[b]
+        if (a.atomname == "H" and
+                not (("N" in b.atomname) or ("O" in b.atomname))) \
+                or (b.atomname == "H" and
+                    not (("N" in a.atomname) or ("O" in a.atomname))):
+            return False
+        return True
 
     def connections_from_atoms(self):
         edges = get_edges_from_distance_matrix(
@@ -68,7 +93,8 @@ class Carbohydrate(PDB):
                 # so we can assign it to the ring
                 # and set the axial property for glycosidic oxygens
                 if not self.isO5(atom):
-                    self.atoms[atom].set_axial(self.is_axial(atom))
+                    pass
+                    # self.atoms[atom].set_axial(self.is_axial(atom))
                 #  check if the atom is a c1
                 if not c1 and self.isC1(atom):
                     self.atoms[atom].set_sugar_position("C1")
@@ -249,7 +275,7 @@ class Carbohydrate(PDB):
     def isC2(self, atomID):
         '''Returns True if atom is a C2'''
         #  CALLS isC1
-        if self.atoms[atomID].isAtom("C") \
+        if atomID in self.atoms.keys() and self.atoms[atomID].isAtom("C") \
                 and self.isAtomInRing(atomID):
             for connections in self.connections[atomID]:
                 if self.isC1(connections):
@@ -258,7 +284,7 @@ class Carbohydrate(PDB):
 
     def isC3(self, atomID):
         # CALLS C5 and C2
-        if self.atoms[atomID].isAtom("C") \
+        if atomID in self.atoms.keys() and self.atoms[atomID].isAtom("C") \
                 and self.isAtomInRing(atomID) \
                 and not self.isC5(atomID):
             for connections in self.connections[atomID]:
@@ -293,10 +319,10 @@ class Carbohydrate(PDB):
         return False  # not a glycosidic bond
 
     def isC5(self, atomID):
-        if self.atoms[atomID].isAtom("C") and self.isAtomInRing(atomID):
+        if atomID in self.atoms.keys() and self.atoms[atomID].isAtom("C") and self.isAtomInRing(atomID):
             T = True
             for connections in self.connections[atomID]:
-                if self.atoms[connections].isAtom("O") \
+                if connections in self.atoms.keys() and self.atoms[connections].isAtom("O") \
                         and not self.isAtomInRing(connections):
                     T = False
             if T:

@@ -36,6 +36,9 @@ class Atom(object):
     def add_connection(self, ID):
         self.connections.append(ID)
 
+    def remove_connection(self, ID):
+        self.connections.remove(ID)
+
     def get_is_axial(self):
         return self.is_axial
 
