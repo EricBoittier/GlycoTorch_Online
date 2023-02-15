@@ -7,7 +7,8 @@ from LinkageError import *
 from Linkage import *
 from Geometry import *
 from RingError import *
-
+import matplotlib.pyplot as plt
+atom_color_dict = {"C": "k", "O": "red", "N": "blue", "S": "yellow", "H": "gray"}
 class Carbohydrate(PDB):
     def __init__(self, filename):
         super().__init__(filename)
@@ -25,9 +26,11 @@ class Carbohydrate(PDB):
                             self.get_atoms()[v].id)
                            for k, v in connections]
             for a, b in connections:
+                #  check if the atoms are valid
                 if self.valid_pdbqt(a, b):
                     self.atoms[a].add_connection(b)
                     self.atoms[b].add_connection(a)
+                # if not valid, remove the hydrogen
                 else:
                     if self.atoms[a].atomname == "H":
                         for con in self.atoms[a].connections:
@@ -43,9 +46,24 @@ class Carbohydrate(PDB):
             self.add_edges(connections)
             self.set_connections()
 
+            self.find_rings()
             print(self.graph)
 
-            self.find_rings()
+            # self.atoms[v].atomname
+            # get color for each node
+            colors = [atom_color_dict[self.atoms[v].atomname]
+                      if (v in self.atoms.keys()) else "green" for v
+                      in self.graph.nodes]
+
+            #  draw the graph with networkx
+            # print(colors)
+            # print(self.rings)
+            # nx.draw_kamada_kawai(self.graph,
+            #         node_color=colors,
+            #         with_labels=True,
+            #                node_size=30,
+            #                font_weight='bold')
+            # plt.show()
 
         if len(self.rings) == 0:
             raise RingError("No rings found in PDB file")
@@ -204,7 +222,7 @@ class Carbohydrate(PDB):
 
             temp_linkage = Linkage(O5, C1, atom, CX, CX_minus_1)
             temp_linkage.set_rings(self.Rings[ring1], self.Rings[ring2])
-
+            print(temp_linkage.__dict__)
             self.Linkages[ring1] = temp_linkage
 
     def get_ring_object(self, ringHash):

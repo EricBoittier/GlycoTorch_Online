@@ -5,7 +5,18 @@ import os
 import sys
 import argparse
 
+class TMP:
+    def __init__(self):
+        self.tmp = []
+        self.tmp_ = open("tmp.pdb", "w")
 
+    def write(self, string):
+        self.tmp.append(string)
+        self.tmp_.write(string)
+        print(string)
+
+    def close(self):
+        self.tmp_.close()
 
 class Carbohydrate_to_PDBQT(object):
     """docstring for Carbohydrate_to_PDBQT"""
@@ -46,26 +57,35 @@ class Carbohydrate_to_PDBQT(object):
         for ci, func_group in enumerate(ring.get_functional_groups()):
             #  write functional groups for ring
             ci = ring.ring_cs[ci]
+            print("ci: ", ci, func_group)
             functional_group_atoms = []
             connected_atom = None
+            # for each atom in the functional group, find the connected atoms
             for a in func_group:
                 #  if not the glycosidic oxygen
                 if self.atoms[a].id not in self.GO_ids:
                     #  found the connected atom
                     if self.atoms[a].id in ci.connections:
                         connected_atom = self.atoms[a]
+                        functional_group_atoms.append(self.atoms[a])
+
                     else:
                         if self.atoms[a].id not in functional_group_atoms:
                             functional_group_atoms.append(self.atoms[a])
 
-            if len(functional_group_atoms) > 2:
+            if len(functional_group_atoms) > 3:
+                # if rotatable group, write to the root/branch
+                # will assume some double bonds are rotatable...  TODO
+                # write the branch name
                 self.branches_to_write_after_root.append(
                     self.branch_str.format(
                         ci.id,
                         connected_atom.id)
                 )
+                # write the branch atoms
                 self.branches_to_write_after_root.\
                     append(connected_atom)
+                #  increment branch count
                 self.branch_count += 1
             else:
                 #  just a non-rotatable group, write to the root/branch
@@ -75,6 +95,7 @@ class Carbohydrate_to_PDBQT(object):
             if len(functional_group_atoms) > 3:
                 for a in functional_group_atoms:
                     self.branches_to_write_after_root.append(a)
+
             #  write the functional group to the root
             if len(functional_group_atoms) > 3:
                 self.branches_to_write_after_root.append(
@@ -213,7 +234,7 @@ class Carbohydrate_to_PDBQT(object):
                 = os.path.join(path, self.carbohydrate.filename)
             print(self.carbohydrate.filepath)
 
-        self.tmp = open("tmp.pdb", "w")
+        self.tmp = TMP() #open("tmp.pdb", "w")
         #  glycosidic oxygen ids (i.e. the main branch points)
 
         # write root
@@ -386,9 +407,7 @@ class Carbohydrate_to_PDBQT(object):
         z = "{:7.3f}".format(atom.z)
 
         add_H = False
-
         ADT = atom.atomname
-
         if atom.atomname == "O" and len(atom.connections) == 1:
             if not self.atoms[atom.connections[0]].atomname.__contains__("S") \
                     and not self.is_next_to_trigonal_planar_carbon(atom) and not self.is_carboxylate(atom):

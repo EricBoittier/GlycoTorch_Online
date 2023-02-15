@@ -1,10 +1,10 @@
 import numpy as np
 
 vanderwaals_radii = {  # Angstrom
-    'H': 1.2,
-    'C': 1.7,
+    'H': 1.2 * 0.8,
+    'C': 1.7 ,#1.7,
     'N': 1.55,
-    'O': 1.52,
+    'O': 1.6,#1.52,
     'F': 1.47,
     'P': 1.8,
     'S': 1.8,
@@ -54,6 +54,6 @@ def get_edges_from_distance_matrix(
     edges = []
     for i in range(len(dm)):
         for j in range(len(dm)):
-            if i < j and dm[i, j] < (radii[i] + radii[j])*0.5:
+            if i < j and dm[i, j] < 0.5*(radii[i] + radii[j]):
                 edges.append((i, j))
     return edges
