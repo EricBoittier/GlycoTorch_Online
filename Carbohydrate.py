@@ -49,24 +49,27 @@ class Carbohydrate(PDB):
             self.find_rings()
             print(self.graph)
 
-            # self.atoms[v].atomname
-            # get color for each node
-            colors = [atom_color_dict[self.atoms[v].atomname]
-                      if (v in self.atoms.keys()) else "green" for v
-                      in self.graph.nodes]
 
-            #  draw the graph with networkx
-            # print(colors)
-            # print(self.rings)
-            # nx.draw_kamada_kawai(self.graph,
-            #         node_color=colors,
-            #         with_labels=True,
-            #                node_size=30,
-            #                font_weight='bold')
-            # plt.show()
+
+
 
         if len(self.rings) == 0:
             raise RingError("No rings found in PDB file")
+
+        #  draw the graph with networkx
+        # self.atoms[v].atomname
+        # get color for each node
+        # colors = [atom_color_dict[self.atoms[v].atomname]
+        #           if (v in self.atoms.keys()) else "green" for v
+        #           in self.graph.nodes]
+        # print(self.rings)
+        # nx.draw_kamada_kawai(self.graph,
+        #         node_color=colors,
+        #         # with_labels=True,
+        #                node_size=30,
+        #                font_weight='bold')
+        # plt.show()
+
 
         self.carbohydrate_name = ""
         self.SugarGraph = nx.DiGraph()
