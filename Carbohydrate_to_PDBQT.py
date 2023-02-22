@@ -202,6 +202,8 @@ class Carbohydrate_to_PDBQT(object):
         # tmp = open("tmp.pdb", "r")
         print(self.carbohydrate.filepath + ".pdbqt")
         test = open(self.carbohydrate.filepath + ".pdbqt", "w")
+        #  some files added endroot after it had already been added, checking for consistency
+        end_root_coming = True
         for line in self.tmp.readlines():
             if line.__contains__("BRANCH"):
                 branch_list = line.split()
@@ -214,7 +216,13 @@ class Carbohydrate_to_PDBQT(object):
                 except:
                     pass
             else:
-                test.write(line)
+                if line.__contains__("ENDROOT"):
+                    #  only write endroot once
+                    if end_root_coming:
+                        test.write(line)
+                        end_root_coming = False
+                else:
+                    test.write(line)
 
         test.close()
 
@@ -370,10 +378,12 @@ class Carbohydrate_to_PDBQT(object):
         return string
 
 
-c = Carbohydrate("/home/EricBoittier/GlycoTorch-Vina/Tutorial/2axm_ligand.pdb")
+# c = Carbohydrate("/home/eric/Documents/github/GlycoTorch-Vina/Tutorial/2axm_ligand.pdb")
+# c = Carbohydrate("/home/eric/Documents/github/GlycoTorch-Vina/Tutorial/glycam_test1.pdb")
+# c = Carbohydrate("/home/EricBoittier/GlycoTorch-Vina/Tutorial/2axm_ligand.pdb")
 # c = Carbohydrate("/Users/ericboittier/Downloads/Unsulphated_HS_tetramer_glycam.pdb")
-pdbqt = Carbohydrate_to_PDBQT(c)
-pdbqt.save_flex()
+# pdbqt = Carbohydrate_to_PDBQT(c)
+# pdbqt.save_flex()
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
