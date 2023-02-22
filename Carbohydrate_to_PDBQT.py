@@ -9,7 +9,7 @@ import argparse
 class TMP:
     def __init__(self):
         self.tmp = []
-        self.tmp_ = open("tmp.pdb", "w")
+#        self.tmp_ = open("tmp.pdb", "w")
         self.root = None
         self.branches = {}
         self.leaves = []
@@ -17,11 +17,12 @@ class TMP:
     def write(self, string):
         if string is not None:
             self.tmp.append(string)
-            self.tmp_.write(string)
-            print(string)
+#            self.tmp_.write(string)
+#            print(string)
 
     def close(self):
-        self.tmp_.close()
+        #self.tmp_.close()
+        pass
 
     def readlines(self):
         return self.tmp
@@ -369,10 +370,10 @@ class Carbohydrate_to_PDBQT(object):
         return string
 
 
-# c = Carbohydrate("/home/eric/Documents/github/GlycoTorch-Vina/Tutorial/2axm_ligand.pdb")
+c = Carbohydrate("/home/EricBoittier/GlycoTorch-Vina/Tutorial/2axm_ligand.pdb")
 # c = Carbohydrate("/Users/ericboittier/Downloads/Unsulphated_HS_tetramer_glycam.pdb")
-# pdbqt = Carbohydrate_to_PDBQT(c)
-# pdbqt.save_flex()
+pdbqt = Carbohydrate_to_PDBQT(c)
+pdbqt.save_flex()
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
