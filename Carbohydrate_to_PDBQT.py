@@ -371,8 +371,8 @@ class Carbohydrate_to_PDBQT(object):
 
 # c = Carbohydrate("/home/eric/Documents/github/GlycoTorch-Vina/Tutorial/2axm_ligand.pdb")
 # c = Carbohydrate("/Users/ericboittier/Downloads/Unsulphated_HS_tetramer_glycam.pdb")
-pdbqt = Carbohydrate_to_PDBQT(c)
-pdbqt.save_flex()
+# pdbqt = Carbohydrate_to_PDBQT(c)
+# pdbqt.save_flex()
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser(description='Convert a GAG ligand from pdb to pdbqt format')
